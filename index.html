@@ -48,7 +48,7 @@
         .sidebar-header h2 {font-size: 18px;margin-bottom: 6px;}
         .sidebar-header p {font-size: 13px;opacity: 0.85;}
         .menu {list-style: none;}
-        .menu-item {border-bottom: 1px solid rgba(255,255,255,0.05);}
+        .menu-item {border-bottom: 1px solid rgba(255,255,0.05);}
         .menu-title {
             display: flex;
             align-items: center;
@@ -89,7 +89,7 @@
         .card {
             background: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 12px rgba(0,0,0.08);
             margin-bottom: 20px;
             overflow: hidden;
         }
@@ -101,14 +101,14 @@
             border-bottom: 1px solid #eee;
         }
         .card-title {font-size: 17px;color: #333;font-weight: 500;}
-        /* 按钮样式 */
+        /* 按钮通用样式 */
         .btn {
-            padding: 7px 14px;
+            padding: 7px 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
         .btn-primary {background: #fd7e14;color: #fff;}
         .btn-primary:hover {background: #e67312;}
@@ -122,46 +122,59 @@
         .btn-danger:hover {background: #a93226;}
         .btn-sm {padding: 5px 10px;font-size: 12px;}
         .file-input {display: none;}
-        /* 表格样式 */
+        .action-bar {display: flex;gap: 10px;align-items: center;}
+        /* 表格美化 */
         .data-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-        }
-        .data-table th, .data-table td {
-            padding: 12px 14px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-            font-size: 13px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
         }
         .data-table th {
-            background: #f8f9fa;
-            color: #333;
+            padding: 13px 14px;
+            text-align: left;
+            font-size: 13px;
+            background-color: #0c5460;
+            color: #fff;
             font-weight: 500;
         }
-        .data-table tr:hover {background: #fafafa;}
+        .data-table td {
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 13px;
+            border-bottom: 1px solid #e9ecef;
+            background: #fff;
+        }
+        .data-table tr:hover td {
+            background-color: #f7f9fc;
+        }
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #999;
             font-size: 14px;
         }
-        .action-bar {display: flex;gap: 10px;align-items: center;}
+        /* 表格输入框美化 */
         .editable {
             background: #fff;
-            border: 1px solid #ddd;
-            padding: 5px 8px;
+            border: 1px solid #dee2e6;
+            padding: 6px 8px;
             width: 100%;
             border-radius: 4px;
+            font-size: 13px;
+            transition: border 0.2s;
         }
         .editable:focus {
             outline: none;
             border: 1px solid #409eff;
+            box-shadow: 0 0 0 2px rgba(64,158,255,0.2);
         }
         .page {display: none;}
         .page.active {display: block;}
 
-        /* ========== 纯美化首页（无图片）========== */
+        /* 首页样式 */
         .home-wrap {
             width: 100%;
             min-height: calc(100vh - 50px - 50px);
@@ -198,6 +211,12 @@
             margin-top: 10px;
             line-height: 1.8;
             text-align: center;
+        }
+        /* 首页按钮区域 */
+        .home-btn-group {
+            margin-top: 40px;
+            display: flex;
+            gap: 15px;
         }
     </style>
 </head>
@@ -308,17 +327,23 @@
     </div>
 
     <div class="main-content">
-        <!-- 首页：纯样式美化，无图片 -->
+        <!-- 首页 -->
         <div id="homePage" class="page active">
             <div class="home-wrap">
                 <h1 class="home-main-title">辛庄村管理系统</h1>
                 <div class="home-line"></div>
                 <p class="home-sub-title">村级台账综合管理平台</p>
                 <p class="home-desc">规范村级台账 · 提升管理效率 · 服务乡村发展</p>
+                <!-- 首页新增导入、清空按钮 -->
+                <div class="home-btn-group">
+                    <button class="btn btn-primary" onclick="document.getElementById('excelFile').click()">批量导入Excel</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">清空全部数据</button>
+                    <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls">
+                </div>
             </div>
         </div>
 
-        <!-- 子菜单台账页面 -->
+        <!-- 台账列表页 -->
         <div id="listPage" class="page">
             <div class="card">
                 <div class="card-header">
@@ -326,9 +351,7 @@
                     <div class="action-bar">
                         <button class="btn btn-success" onclick="addNewRow()">新增数据</button>
                         <button class="btn btn-primary" onclick="saveChanges()">保存修改</button>
-                        <button class="btn btn-danger" onclick="document.getElementById('excelFile').click()">导入Excel</button>
-                        <button class="btn btn-danger" onclick="clearAllData()">清空全部</button>
-                        <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls">
+                        <button class="btn btn-danger btn-sm" onclick="clearAllData()">清空全部</button>
                     </div>
                 </div>
                 <div id="listTableBox" style="padding: 0 22px 22px;">
@@ -372,7 +395,7 @@
             }
         }
 
-        // 渲染可编辑表格 + 回车新增
+        // 渲染美化表格 + 回车新增
         function renderEditableTable(data, boxId) {
             const box = document.getElementById(boxId);
             if (!data || data.length === 0) {
@@ -391,8 +414,9 @@
                 html += `<td><button class="btn btn-danger btn-sm" onclick="deleteRow(${idx})">删除</button></td></tr>`;
             });
             html += `</tbody></table>`;
-            box.innerHTML = html;
+            box.innerHTML;
 
+            // 回车快速新增
             const inputs = box.querySelectorAll(".editable");
             inputs.forEach(inp => {
                 inp.addEventListener("keydown", function(e) {
@@ -404,7 +428,7 @@
             });
         }
 
-        // 新增一行数据
+        // 新增一行
         function addNewRow() {
             if (!currentCategory) return;
             const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
@@ -433,7 +457,7 @@
             }
         }
 
-        // 保存所有修改
+        // 保存修改
         function saveChanges() {
             const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
             rows.forEach((row, rIdx) => {
@@ -455,7 +479,7 @@
             alert("✅ 数据保存成功！");
         }
 
-        // 导入Excel
+        // Excel导入
         document.getElementById("excelFile").addEventListener("change", function(e) {
             const file = e.target.files[0];
             if (!file) return;
