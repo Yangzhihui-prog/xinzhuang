@@ -207,19 +207,46 @@
                     </div>
                 </div>
                 <div id="listTableBox" style="padding:0 22px 22px">
-                    <div class="empty-state"><p>当前分类暂无数据，请点击「新增」添加</p></div>
+                    <div class="empty-state"><p>请点击左侧子菜单查看对应台账数据</p></div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // 全局数据
         let totalData = JSON.parse(localStorage.getItem("villageTotalData") || "[]");
-        let excelHeaders = [];
         let categoryKey = "分类名称";
         let currentCategory = "";
         let isEditMode = true;
 
+        // 子菜单表头配置（完全匹配Excel模板）
+        const tableHeaders = {
+            '外出务工': ['分类名称', '姓名', '身份证号', '联系电话', '家庭住址', '务工地点', '务工单位', '从事行业', '月收入', '外出时间', '返乡时间', '紧急联系人', '备注'],
+            '本地务工': ['分类名称', '姓名', '身份证号', '联系电话', '家庭住址', '务工单位', '从事岗位', '月收入', '入职时间', '社保缴纳情况', '备注'],
+            '技能培训': ['分类名称', '姓名', '身份证号', '联系电话', '培训项目', '培训时间', '培训地点', '发证机构', '证书等级', '就业情况', '备注'],
+            '常住人口': ['分类名称', '姓名', '身份证号', '性别', '年龄', '民族', '联系电话', '家庭住址', '户籍地址', '婚姻状况', '文化程度', '职业', '备注'],
+            '流动人口': ['分类名称', '姓名', '身份证号', '性别', '年龄', '民族', '联系电话', '户籍地', '现居住地', '流入时间', '流出时间', '事由', '紧急联系人', '备注'],
+            '空挂户籍': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '户籍地址', '实际居住地址', '空挂原因', '登记时间', '备注'],
+            '重点人员': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '重点类型', '管控等级', '登记时间', '责任人', '备注'],
+            '视力听力残疾': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '残疾类型', '残疾等级', '发证时间', '监护人', '备注'],
+            '肢体智力残疾': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '残疾类型', '残疾等级', '发证时间', '监护人', '备注'],
+            '持证残疾台账': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '残疾类型', '残疾等级', '证书编号', '发证机构', '有效期', '备注'],
+            '在职党员': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '入党时间', '转正时间', '党内职务', '所在支部', '备注'],
+            '流动党员': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '入党时间', '流出时间', '流入地', '流动原因', '备注'],
+            '老党员台账': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '入党时间', '党龄', '身体状况', '子女情况', '备注'],
+            '一般脱贫户': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '家庭人口', '脱贫时间', '帮扶责任人', '帮扶措施', '年收入情况', '备注'],
+            '不稳定户': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '家庭人口', '致贫风险', '监测时间', '帮扶责任人', '帮扶措施', '备注'],
+            '边缘易致贫户': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '家庭人口', '致贫风险', '监测时间', '帮扶责任人', '帮扶措施', '年收入情况', '备注'],
+            '低保户': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '家庭人口', '低保类型', '低保金额', '开始时间', '家庭收入', '致困原因', '备注'],
+            '特困户': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '特困类型', '供养方式', '供养标准', '开始时间', '身体状况', '监护人', '备注'],
+            '监测户': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '家庭人口', '监测类型', '监测时间', '风险等级', '帮扶责任人', '帮扶措施', '备注'],
+            '耕地信息': ['分类名称', '地块编号', '地块名称', '位置', '面积(亩)', '土地类型', '权属人', '种植作物', '种植面积', '流转情况', '备注'],
+            '宅基地': ['分类名称', '宅基地编号', '位置', '面积(㎡)', '权属人', '家庭人口', '建房时间', '房屋结构', '层数', '建筑面积', '审批情况', '备注'],
+            '土地流转': ['分类名称', '流转编号', '地块名称', '位置', '面积(亩)', '转出方', '转入方', '流转类型', '流转期限', '流转价格(元/年)', '合同编号', '备注']
+        };
+
+        // 切换页面
         function switchPage(type) {
             document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
             currentCategory = type;
@@ -235,6 +262,7 @@
             }
         }
 
+        // 获取当前分类筛选后的数据
         function getFilterData() {
             return totalData.filter(item => {
                 const itemCategory = String(item[categoryKey] || "").trim().replace(/\s+/g, "").toLowerCase();
@@ -243,17 +271,21 @@
             });
         }
 
-        // 修复点：把 isEdit 改成 isEditMode
+        // 渲染表格（动态匹配当前子菜单表头）
         function renderEditableTable(data) {
             const box = document.getElementById("listTableBox");
+            if (!currentCategory || !tableHeaders[currentCategory]) {
+                box.innerHTML = '<div class="empty-state"><p>未找到对应台账配置</p></div>';
+                return;
+            }
+            const headers = tableHeaders[currentCategory];
             if (!data || data.length === 0) {
                 box.innerHTML = '<div class="empty-state"><p>当前分类暂无数据，请点击「新增」添加</p></div>';
                 return;
             }
-            const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
             let html = '<table class="data-table"><thead><tr>';
             headers.forEach(h => html += '<th>' + h + '</th>');
-            html += '<th>操作</th></tr></tbody><tbody>';
+            html += '<th>操作</th></tr></thead><tbody>';
             data.forEach((row, i) => {
                 html += '<tr data-row-idx="' + i + '">';
                 headers.forEach(field => {
@@ -266,6 +298,7 @@
             html += '</tbody></table>';
             box.innerHTML = html;
 
+            // 绑定回车新增事件
             const inputs = box.querySelectorAll(".editable");
             inputs.forEach(inp => {
                 inp.onkeydown = e => {
@@ -277,24 +310,29 @@
             });
         }
 
+        // 开启编辑模式
         function openEdit() {
             isEditMode = true;
             renderEditableTable(getFilterData());
-            alert("已开启编辑模式");
+            alert("已开启编辑模式，可修改数据");
         }
 
+        // 新增数据行（自动匹配当前表头）
         function addNewRow() {
-            if (!currentCategory) return;
-            const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
+            if (!currentCategory || !tableHeaders[currentCategory]) return;
+            const headers = tableHeaders[currentCategory];
             const newItem = {};
-            headers.forEach(h => newItem[h] = h === categoryKey ? currentCategory : "");
+            headers.forEach(h => {
+                newItem[h] = h === categoryKey ? currentCategory : "";
+            });
             totalData.push(newItem);
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
             renderEditableTable(getFilterData());
         }
 
+        // 删除单行数据
         function deleteRow(index) {
-            if (!confirm("确定删除？")) return;
+            if (!confirm("确定删除本条数据？")) return;
             const list = getFilterData();
             const idx = totalData.indexOf(list[index]);
             if (idx > -1) {
@@ -304,6 +342,7 @@
             }
         }
 
+        // 保存数据
         function saveChanges() {
             const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
             const list = getFilterData();
@@ -317,9 +356,10 @@
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
             isEditMode = false;
             renderEditableTable(getFilterData());
-            alert("✅ 保存成功，已锁定编辑");
+            alert("✅ 数据保存成功，已锁定编辑");
         }
 
+        // Excel导入功能
         document.getElementById("excelFile").addEventListener("change", e => {
             const file = e.target.files[0];
             if (!file) return;
@@ -328,16 +368,14 @@
                 try {
                     const wb = XLSX.read(ev.target.result, { type: "array" });
                     const sheet = wb.SheetNames[0];
-                    excelHeaders = XLSX.utils.sheet_to_json(wb.Sheets[sheet], { header: 1 })[0];
-                    categoryKey = excelHeaders.find(h => String(h).trim() === "分类名称") || excelHeaders[0];
                     const arr = XLSX.utils.sheet_to_json(wb.Sheets[sheet]);
                     if (arr.length === 0) { alert("表格为空"); return; }
                     totalData = totalData.concat(arr);
                     localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                    alert("✅ 导入成功 " + arr.length + " 条");
+                    alert("✅ 导入成功 " + arr.length + " 条数据");
                     switchPage(currentCategory);
                 } catch (err) {
-                    alert("导入失败");
+                    alert("导入失败，请检查表格格式");
                     console.error(err);
                 }
                 e.target.value = "";
@@ -345,15 +383,16 @@
             reader.readAsArrayBuffer(file);
         });
 
+        // 清空全部数据
         function clearAllData() {
-            if (!confirm("确定清空所有数据？")) return;
+            if (!confirm("确定清空所有台账数据？此操作不可恢复！")) return;
             totalData = [];
-            excelHeaders = [];
             localStorage.removeItem("villageTotalData");
             switchPage(currentCategory);
-            alert("✅ 已清空");
+            alert("✅ 所有数据已清空");
         }
 
+        // 菜单展开/收起
         document.querySelectorAll(".menu-title").forEach(item => {
             item.addEventListener("click", function () {
                 const parent = this.closest(".menu-item");
@@ -362,6 +401,7 @@
             });
         });
 
+        // 页面初始化
         window.onload = function () {
             switchPage("home");
         };
