@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>焦店镇辛庄村-村级管理平台</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // =========== 替换为你自己的Supabase密钥 ===========
+    const SUPABASE_URL = "https://ihkgdxthshfzsdtbwje.supabase.co
+";
+    const SUPABASE_ANON_KEY = "sb_publishable_HGvaSBNMyl89hWZKW8XDzA_CciDVbse
+";
+    // =================================================
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
+  <style>
+    * {margin: 0;padding: 0;box-sizing: border-box;}
+    body {font-family: "Microsoft Yahei",sans-serif;background: #f4f6f8;display: flex;}
+    .top-bar {position: fixed;top: 0;left: 220px;right: 0;height: 50px;background: #0d475c;display: flex;align-items: center;padding: 0 25px;z-index: 100;}
+    .sys-name {color: #fff;font-size: 18px;flex: 1;}
+    .back-index {padding: 6px 16px;background: #2c9c8e;color: #fff;text-decoration: none;border-radius: 4px;font-size: 14px;}
+    .sidebar {width: 220px;background: #0d475c;color: #fff;min-height: 100vh;position: fixed;top: 0;left: 0;}
+    .sidebar-header {padding: 20px;border-bottom: 1px solid rgba(255,255,255,0.1);}
+    .sidebar-header h2 {font-size: 20px;margin-bottom: 5px;}
+    .sidebar-header p {font-size: 13px;opacity: 0.8;}
+    .menu {list-style: none;}
+    .menu-item {border-bottom: 1px solid rgba(255,255,255,0.05);}
+    .menu-title {display: flex;align-items: center;padding: 12px 20px;color: #fff;text-decoration: none;cursor: pointer;transition: background 0.2s;}
+    .menu-title:hover {background: #125a73;}
+    .icon {margin-right: 10px;}
+    .arrow {margin-left: auto;transition: transform 0.3s ease;}
+    .submenu {list-style: none;max-height: 0;overflow: hidden;transition: max-height 0.3s ease;background: #0a384a;}
+    .submenu li a {display: block;padding: 10px 20px 10px 45px;color: #ddd;text-decoration: none;font-size: 14px;}
+    .submenu li a:hover {background: #0f485e;}
+    .menu-item.open .arrow {transform: rotate(180deg);}
+    .menu-item.open .submenu {max-height: 500px;}
+    .main-content {flex: 1;margin-left: 220px;margin-top: 50px;padding: 25px 30px;}
+    .content-panel {display: none;}
+    .content-panel.active {display: block;}
+    .page-title {font-size: 22px;color: #333;margin-bottom: 20px;display: flex;justify-content: space-between;align-items: center;flex-wrap: wrap;gap: 10px;}
+    .btn-group {display: flex;gap: 10px;flex-wrap: wrap;}
+    .btn {padding: 8px 16px;border: none;border-radius: 4px;cursor: pointer;font-size: 14px;color: #fff;}
+    .btn-import {background: #e67e22;font-weight: bold;}
+    .btn-clear {background: #dc3545;}
+    .file-input {display: none;}
+    .tip-text {color: #666;margin: 10px 0;font-size: 14px;line-height: 1.8;background: #fff;padding: 15px;border-radius: 6px;border: 1px solid #eee;}
+    .table-wrap {background: #fff;border-radius: 6px;overflow: hidden;box-shadow: 0 1px 3px #ddd;margin-top: 15px;}
+    table {width: 100%;border-collapse: collapse;}
+    th,td {padding: 12px 15px;text-align: center;font-size: 14px;border: 1px solid #eee;white-space: nowrap;max-width: 200px;overflow: hidden;text-overflow: ellipsis;}
+    thead tr {background: #0d475c;color: #fff;position: sticky;top: 0;}
+    tbody tr:nth-child(even) {background: #f8f9fa;}
+    tbody tr:hover {background: #e8f4f8;}
+    .operate-btn {padding: 4px 10px;border: none;border-radius: 3px;cursor: pointer;margin: 0 2px;}
+    .edit-btn {background: #2c9c8e;color: #fff;}
+    .del-btn {background: #dc3545;color: #fff;}
+    .mask {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0,0,0,0.5);display: none;align-items: center;justify-content: center;z-index: 999;}
+    .modal {width: 600px;max-width: 90vw;background: #fff;border-radius: 6px;padding: 20px;max-height: 80vh;overflow-y: auto;}
+    .modal-header {display: flex;justify-content: space-between;align-items: center;margin-bottom: 15px;padding-bottom: 10px;border-bottom: 1px solid #eee;}
+    .close-modal {cursor: pointer;font-size: 20px;color: #666;}
+    .form-item {margin: 12px 0;display: flex;align-items: center;flex-wrap: wrap;gap: 10px;}
+    .form-item label {width: 100px;color: #333;flex-shrink: 0;}
+    .form-item input {flex: 1;padding: 8px 10px;border: 1px solid #ccc;border-radius: 4px;min-width: 200px;}
+    .modal-footer {margin-top: 20px;display: flex;gap: 10px;justify-content: center;}
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="sys-name">焦店镇辛庄村 - 村级管理平台</div>
+    <a href="javascript:switchPage('index')" class="back-index">返回首页</a>
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>辛庄村管理系统</h2>
+      <p>焦店镇村级台账平台</p>
+    </div>
+    <ul class="menu">
+      <li class="menu-item active">
+        <a class="menu-title" href="javascript:switchPage('index')">
+          <span class="icon">🏠</span><span>首页</span>
+        </a>
+      </li>
+      <li class="menu-item">
+        <div class="menu-title">
+          <span class="icon">💼</span><span>务工信息</span><span class="arrow">▼</span>
+        </div>
+        <ul class="submenu">
+          <li><a href="javascript:switchPage('workIn')">外出务工</a></li>
+          <li><a href="javascript:switchPage('workOut')">本地务工</a></li>
+          <li><a href="javascript:switchPage('workSkill')">技能培训</a></li>
+        </ul>
+      </li>
+      <li class="menu-item">
+        <div class="menu-title">
+          <span class="icon">👥</span><span>村民信息</span><span class="arrow">▼</span>
+        </div>
+        <ul class="submenu">
+          <li><a href="javascript:switchPage('residentConstant')">常住人口</a></li>
+          <li><a href="javascript:switchPage('residentFlow')">流动人口</a></li>
+          <li><a href="javascript:switchPage('residentEmpty')">空挂户籍</a></li>
+          <li><a href="javascript:switchPage('residentFocus')">重点人员</a></li>
+        </ul>
+      </li>
+      <li class="menu-item">
+        <div class="menu-title">
+          <span class="icon">♿</span><span>特殊群体</span><span class="arrow">▼</span>
+        </div>
+        <ul class="submenu">
+          <li><a href="javascript:switchPage('disability1')">视力听力残疾</a></li>
+          <li><a href="javascript:switchPage('disability2')">肢体智力残疾</a></li>
+          <li><a href="javascript:switchPage('disability3')">持证残疾台账</a></li>
+        </ul>
+      </li>
+      <li class="menu-item">
+        <div class="menu-title">
+          <span class="icon">☭</span><span>党员管理</span><span class="arrow">▼</span>
+        </div>
+        <ul class="submenu">
+          <li><a href="javascript:switchPage('party1')">在职党员</a></li>
+          <li><a href="javascript:switchPage('party2')">流动党员</a></li>
+          <li><a href="javascript:switchPage('party3')">老党员台账</a></li>
+        </ul>
+      </li>
+      <li class="menu-item">
+        <div class="menu-title">
+          <span class="icon">💛</span><span>帮扶台账</span><span class="arrow">▼</span>
+        </div>
+        <ul class="submenu">
+          <li><a href="javascript:switchPage('poverty1')">一般脱贫户</a></li>
+          <li><a href="javascript:switchPage('poverty2')">不稳定户</a></li>
+          <li><a href="javascript:switchPage('poverty3')">边缘易致贫户</a></li>
+        </ul>
+      </li>
+      <li class="menu-item open">
+        <div class="menu-title">
+          <span class="icon">❤️</span><span>民政救助</span><span class="arrow">▼</span>
+        </div>
+        <ul class="submenu">
+          <li><a href="javascript:switchPage('lowIncome')">低保户</a></li>
+          <li><a class="active" href="javascript:switchPage('extremePoverty')">特困户</a></li>
+          <li><a href="javascript:switchPage('monitorHousehold')">监测户</a></li>
+        </ul>
+      </li>
+      <li class="menu-item">
+        <div class="menu-title">
+          <span class="icon">🌾</span><span>土地台账</span><span class="arrow">▼</span>
+        </div>
+        <ul class="submenu">
+          <li><a href="javascript:switchPage('landCultivated')">耕地信息</a></li>
+          <li><a href="javascript:switchPage('landHomestead')">宅基地</a></li>
+          <li><a href="javascript:switchPage('landTransfer')">土地流转</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <div class="content-panel active" id="index">
+      <div class="page-title">
+        <span>系统首页｜数据统一云端存储 多人实时共享</span>
+        <div class="btn-group">
+          <button class="btn btn-import" onclick="document.getElementById('excelFile').click()">📥 一键导入Excel台账</button>
+          <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls">
+          <button class="btn btn-clear" onclick="clearAllCloudData()">🗑️ 清空全部数据</button>
+        </div>
+      </div>
+      <div class="tip-text">
+        <strong>云端导入说明：</strong><br>
+        1. Excel第一列固定为【分类标识】，匹配左侧菜单名称；<br>
+        2. 后方可自定义任意列字段，导入后自动分类归档；<br>
+        3. 所有数据存入云端数据库，多人访问同步查看。
+      </div>
+    </div>
+
+    <div class="content-panel" id="extremePoverty"><div class="page-title"><span>特困户人员台账</span></div><div class="table-wrap" id="wrap-extremePoverty"></div></div>
+    <div class="content-panel" id="lowIncome"><div class="page-title"><span>低保户人员台账</span></div><div class="table-wrap" id="wrap-lowIncome"></div></div>
+    <div class="content-panel" id="monitorHousehold"><div class="page-title"><span>监测户人员台账</span></div><div class="table-wrap" id="wrap-monitorHousehold"></div></div>
+    <div class="content-panel" id="workIn"><div class="page-title"><span>外出务工台账</span></div><div class="table-wrap" id="wrap-workIn"></div></div>
+    <div class="content-panel" id="workOut"><div class="page-title"><span>本地务工台账</span></div><div class="table-wrap" id="wrap-workOut"></div></div>
+    <div class="content-panel" id="workSkill"><div class="page-title"><span>技能培训台账</span></div><div class="table-wrap" id="wrap-workSkill"></div></div>
+    <div class="content-panel" id="residentConstant"><div class="page-title"><span>常住人口台账</span></div><div class="table-wrap" id="wrap-residentConstant"></div></div>
+    <div class="content-panel" id="residentFlow"><div class="page-title"><span>流动人口台账</span></div><div class="table-wrap" id="wrap-residentFlow"></div></div>
+    <div class="content-panel" id="residentEmpty"><div class="page-title"><span>空挂户籍台账</span></div><div class="table-wrap" id="wrap-residentEmpty"></div></div>
+    <div class="content-panel" id="residentFocus"><div class="page-title"><span>重点人员台账</span></div><div class="table-wrap" id="wrap-residentFocus"></div></div>
+    <div class="content-panel" id="disability1"><div class="page-title"><span>视力听力残疾台账</span></div><div class="table-wrap" id="wrap-disability1"></div></div>
+    <div class="content-panel" id="disability2"><div class="page-title"><span>肢体智力残疾台账</span></div><div class="table-wrap" id="wrap-disability2"></div></div>
+    <div class="content-panel" id="disability3"><div class="page-title"><span>持证残疾台账</span></div><div class="table-wrap" id="wrap-disability3"></div></div>
+    <div class="content-panel" id="party1"><div class="page-title"><span>在职党员台账</span></div><div class="table-wrap" id="wrap-party1"></div></div>
+    <div class="content-panel" id="party2"><div class="page-title"><span>流动党员台账</span></div><div class="table-wrap" id="wrap-party2"></div></div>
+    <div class="content-panel" id="party3"><div class="page-title"><span>老党员台账</span></div><div class="table-wrap" id="wrap-party3"></div></div>
+    <div class="content-panel" id="poverty1"><div class="page-title"><span>一般脱贫户台账</span></div><div class="table-wrap" id="wrap-poverty1"></div></div>
+    <div class="content-panel" id="poverty2"><div class="page-title"><span>不稳定户台账</span></div><div class="table-wrap" id="wrap-poverty2"></div></div>
+    <div class="content-panel" id="poverty3"><div class="page-title"><span>边缘易致贫户台账</span></div><div class="table-wrap" id="wrap-poverty3"></div></div>
+    <div class="content-panel" id="landCultivated"><div class="page-title"><span>耕地信息台账</span></div><div class="table-wrap" id="wrap-landCultivated"></div></div>
+    <div class="content-panel" id="landHomestead"><div class="page-title"><span>宅基地台账</span></div><div class="table-wrap" id="wrap-landHomestead"></div></div>
+    <div class="content-panel" id="landTransfer"><div class="page-title"><span>土地流转台账</span></div><div class="table-wrap" id="wrap-landTransfer"></div></div>
+  </div>
+
+  <div class="mask" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">云端数据编辑</h3>
+        <span class="close-modal" onclick="closeEditModal()">×</span>
+      </div>
+      <div id="modalForm"></div>
+      <div class="modal-footer">
+        <button class="btn btn-import" onclick="saveCloudEdit()">保存修改</button>
+        <button class="btn btn-clear" onclick="closeEditModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const typeMap = {
+      "特困户": "extremePoverty",
+      "低保户": "lowIncome",
+      "监测户": "monitorHousehold",
+      "外出务工": "workIn",
+      "本地务工": "workOut",
+      "技能培训": "workSkill",
+      "常住人口": "residentConstant",
+      "流动人口": "residentFlow",
+      "空挂户籍": "residentEmpty",
+      "重点人员": "residentFocus",
+      "视力听力残疾": "disability1",
+      "肢体智力残疾": "disability2",
+      "持证残疾": "disability3",
+      "在职党员": "party1",
+      "流动党员": "party2",
+      "老党员": "party3",
+      "一般脱贫户": "poverty1",
+      "不稳定户": "poverty2",
+      "边缘易致贫户": "poverty3",
+      "耕地信息": "landCultivated",
+      "宅基地": "landHomestead",
+      "土地流转": "landTransfer"
+    };
+    let currentEditCategory = "";
+    let currentEditIndex = -1;
+    let allCloudData = {};
+
+    // 菜单折叠
+    document.querySelectorAll(".menu-title").forEach(el=>{
+      if(el.querySelector(".arrow")){
+        el.addEventListener("click",()=>{
+          el.parentElement.classList.toggle("open");
+        })
+      }
+    })
+
+    // 页面切换
+    function switchPage(pid){
+      document.querySelectorAll(".content-panel").forEach(p=>p.classList.remove("active"));
+      document.getElementById(pid).classList.add("active");
+    }
+
+    // 初始化加载云端数据
+    window.onload = async function(){
+      await loadAllCloudData();
+      renderAllTable();
+      document.getElementById("excelFile").addEventListener("change",handleExcelUpload);
+    }
+
+    // 拉取所有云端数据
+    async function loadAllCloudData(){
+      const {data,error} = await supabase.from("village_data").select("*");
+      if(error) return console.error(error);
+      allCloudData = {};
+      data.forEach(item=>{
+        allCloudData[item.category] = {headers:item.headers,rows:item.rows,id:item.id};
+      })
+    }
+
+    // 渲染全部表格
+    function renderAllTable(){
+      for(let cat in allCloudData){
+        renderSingleTable(cat);
+      }
+    }
+
+    // 单分类渲染
+    function renderSingleTable(category){
+      const pageId = typeMap[category];
+      if(!pageId) return;
+      const wrap = document.getElementById(`wrap-${pageId}`);
+      const item = allCloudData[category];
+      if(!item || item.headers.length===0){
+        wrap.innerHTML = "<p style='padding:24px;text-align:center;color:#666'>暂无台账数据</p>";
+        return;
+      }
+      let html = `<table><thead><tr><th>序号</th>`;
+      item.headers.forEach(h=>html += `<th>${h}</th>`);
+      html += `<th>操作</th></tr></thead><tbody>`;
+      item.rows.forEach((row,idx)=>{
+        html += `<tr><td>${idx+1}</td>`;
+        item.headers.forEach((_,i)=>html += `<td>${row[i]||""}</td>`);
+        html += `<td>
+          <button class="operate-btn edit-btn" onclick="openEditForm('${category}',${idx})">编辑</button>
+          <button class="operate-btn del-btn" onclick="deleteCloudRow('${category}',${idx})">删除</button>
+        </td></tr>`;
+      })
+      html += `</tbody></table>`;
+      wrap.innerHTML = html;
+    }
+
+    // Excel解析导入
+    function handleExcelUpload(e){
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(ev){
+        const buf = ev.target.result;
+        const wb = XLSX.read(buf,{type:"array"});
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(sheet,{header:1});
+        if(json.length<2){alert("表格内容不足");return;}
+        const topHeaders = json[0].slice(1);
+        const group = {};
+        for(let i=1;i<json.length;i++){
+          const line = json[i];
+          const cat = line[0]?.trim();
+          if(!cat || !typeMap[cat]) continue;
+          if(!group[cat]) group[cat] = [];
+          group[cat].push(line.slice(1));
+        }
+        // 批量写入云端
+        for(let c in group){
+          await upsertCloudCategory(c,topHeaders,group[c]);
+        }
+        await loadAllCloudData();
+        renderAllTable();
+        alert("云端导入完成，所有人员已同步共享");
+      }
+      reader.readAsArrayBuffer(file);
+      e.target.value = "";
+    }
+
+    // 云端更新/插入分类数据
+    async function upsertCloudCategory(category,headers,rows){
+      const exist = allCloudData[category];
+      if(exist){
+        await supabase.from("village_data")
+          .update({headers,rows})
+          .eq("id",exist.id);
+      }else{
+        await supabase.from("village_data")
+          .insert({category,headers,rows});
+      }
+    }
+
+    // 删除单行
+    async function deleteCloudRow(category,idx){
+      if(!confirm("确认删除本条？")) return;
+      const data = allCloudData[category];
+      data.rows.splice(idx,1);
+      await supabase.from("village_data")
+        .update({rows:data.rows})
+        .eq("id",data.id);
+      await loadAllCloudData();
+      renderSingleTable(category);
+    }
+
+    // 打开编辑弹窗
+    function openEditForm(category,idx){
+      currentEditCategory = category;
+      currentEditIndex = idx;
+      const data = allCloudData[category];
+      const row = data.rows[idx];
+      const modal = document.getElementById("modalForm");
+      document.getElementById("modalTitle").innerText = `编辑${category}台账`;
+      let html = "";
+      data.headers.forEach((h,i)=>{
+        html += `<div class="form-item"><label>${h}</label><input type="text" id="field_${i}" value="${row[i]||""}"></div>`;
+      })
+      modal.innerHTML = html;
+      document.getElementById("editModal").style.display = "flex";
+    }
+
+    function closeEditModal(){
+      document.getElementById("editModal").style.display = "none";
+      currentEditCategory = "";
+      currentEditIndex = -1;
+    }
+
+    // 保存编辑到云端
+    async function saveCloudEdit(){
+      const cat = currentEditCategory;
+      const idx = currentEditIndex;
+      const data = allCloudData[cat];
+      const newRow = [];
+      data.headers.forEach((_,i)=>{
+        newRow.push(document.getElementById(`field_${i}`).value);
+      })
+      data.rows[idx] = newRow;
+      await supabase.from("village_data")
+        .update({rows:data.rows})
+        .eq("id",data.id);
+      await loadAllCloudData();
+      renderSingleTable(cat);
+      closeEditModal();
+      alert("修改已同步云端");
+    }
+
+    // 清空全部云端数据
+    async function clearAllCloudData(){
+      if(!confirm("确定清空云端所有台账，无法恢复？")) return;
+      await supabase.from("village_data").delete().neq("id",0);
+      allCloudData = {};
+      renderAllTable();
+      alert("云端数据已清空");
+    }
+  </script>
+</body>
+</html>
