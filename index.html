@@ -92,10 +92,10 @@
 
     <script>
         let supabase;
-        const TABLE_NAME = "village_data";
 
         async function initSupabase() {
-            const SUPABASE_URL = "https://ihkgdxthshfzsdtbwje.supabase.co";
+            // 换成带国内代理的URL
+            const SUPABASE_URL = "https://ihkgdxthshfzsdtbwje.supabase.co.proxy.cors.ninja";
             const SUPABASE_ANON_KEY = "sb_publishable_HGvaSBNMy189hWZKW8XDzA_CciDVbse";
             try {
                 const { createClient } = await import("https://esm.run/@supabase/supabase-js@2");
