@@ -7,6 +7,7 @@
     <style>
         * {margin: 0;padding: 0;box-sizing: border-box;}
         body {font-family: "Microsoft Yahei",sans-serif;background: #f4f6f8;display: flex;}
+        /* 顶部导航栏 */
         .top-bar {
             position: fixed;top: 0;left: 220px;right: 0;height: 50px;
             background: #0c5460;display: flex;align-items: center;padding: 0 25px;z-index: 100;
@@ -16,6 +17,7 @@
             padding: 6px 16px;background: #20c997;color: #fff;
             text-decoration: none;border-radius: 4px;font-size: 14px;
         }
+        /* 左侧侧边栏 */
         .sidebar {
             width: 220px;background: #0c5460;color: #fff;
             min-height: 100vh;position: fixed;top: 0;left: 0;
@@ -46,6 +48,7 @@
         .submenu li a:hover {background: #083e45;}
         .menu-item.open .arrow {transform: rotate(180deg);}
         .menu-item.open .submenu {max-height: 600px;}
+        /* 主内容区 */
         .main-content {
             flex: 1;margin-left: 220px;margin-top: 50px;padding: 25px;
         }
@@ -58,6 +61,7 @@
             padding: 16px 22px;border-bottom: 1px solid #eee;
         }
         .card-title {font-size: 17px;color: #333;font-weight: 500;}
+        /* 按钮通用样式 */
         .btn {
             padding: 7px 16px;border: none;border-radius: 6px;
             cursor: pointer;font-size: 13px;transition: all 0.2s ease;
@@ -72,27 +76,86 @@
         .btn-danger:hover {background: #a93226;}
         .btn-sm {padding: 5px 10px;font-size: 12px;}
         .action-bar {display: flex;gap: 10px;align-items: center;}
+        /* 表格美化优化 */
         .data-table {
-            width: 100%;border-collapse: collapse;margin-top: 15px;
-            border: 1px solid #e9ecef;border-radius: 6px;overflow: hidden;
+            width: 100%;border-collapse: separate;border-spacing: 0;
+            margin-top: 15px;border: 1px solid #e9ecef;
+            border-radius: 8px;overflow: hidden;
         }
         .data-table th {
-            padding: 13px 14px;text-align: left;font-size: 13px;
-            background-color: #0c5460;color: #fff;font-weight: 500;
+            padding: 14px 16px;text-align: left;font-size: 13px;
+            background-color: #0a4c55;color: #fff;font-weight: 600;
+            border-bottom: 2px solid #083e45;white-space: nowrap;
         }
         .data-table td {
-            padding: 12px 14px;text-align: left;font-size: 13px;
-            border-bottom: 1px solid #e9ecef;background: #fff;
+            padding: 12px 16px;text-align: left;font-size: 13px;
+            border-bottom: 1px solid #f1f3f4;background: #fff;
+            vertical-align: middle;
         }
+        .data-table tr:last-child td {border-bottom: none;}
         .data-table tr:hover td {background-color: #f7f9fc;}
-        .empty-state {text-align: center;padding: 60px 20px;color: #999;font-size: 14px;}
+        .empty-state {
+            text-align: center;padding: 80px 20px;color: #999;font-size: 14px;
+            display: flex;flex-direction: column;align-items: center;gap: 10px;
+        }
+        .empty-state i {font-size: 40px;opacity: 0.5;}
+        /* 输入框样式 */
         .editable {
             background: #fff;border: 1px solid #dee2e6;padding: 6px 8px;width: 100%;
-            border-radius: 4px;font-size: 13px;
+            border-radius: 4px;font-size: 13px;transition: all 0.2s;
         }
-        .editable:read-only {background: #f8f9fa;border-color: #e9ecef;}
+        .editable:focus {
+            outline: none;border: 1px solid #409eff;
+            box-shadow: 0 0 0 2px rgba(64,158,255,0.2);
+        }
+        .editable:read-only {
+            background: #f8f9fa;border-color: #e9ecef;cursor: default;
+        }
+        /* 新增数据模态框样式 */
+        .modal-mask {
+            position: fixed;top: 0;left: 0;right: 0;bottom: 0;
+            background: rgba(0,0,0,0.5);z-index: 999;
+            display: none;align-items: center;justify-content: center;
+        }
+        .modal-mask.active {display: flex;}
+        .modal-box {
+            background: #fff;border-radius: 8px;width: 90%;max-width: 600px;
+            max-height: 80vh;overflow-y: auto;box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            padding: 16px 22px;border-bottom: 1px solid #eee;
+            display: flex;justify-content: space-between;align-items: center;
+        }
+        .modal-title {font-size: 16px;color: #333;font-weight: 500;}
+        .modal-close {
+            background: none;border: none;font-size: 20px;color: #999;
+            cursor: pointer;transition: color 0.2s;
+        }
+        .modal-close:hover {color: #333;}
+        .modal-body {padding: 20px 22px;}
+        .form-item {margin-bottom: 16px;}
+        .form-label {
+            display: block;margin-bottom: 6px;font-size: 13px;color: #333;
+            font-weight: 500;
+        }
+        .form-input {
+            width: 100%;padding: 8px 12px;border: 1px solid #dee2e6;
+            border-radius: 4px;font-size: 13px;transition: all 0.2s;
+        }
+        .form-input:focus {
+            outline: none;border: 1px solid #409eff;
+            box-shadow: 0 0 0 2px rgba(64,158,255,0.2);
+        }
+        .form-input:read-only {
+            background: #f8f9fa;border-color: #e9ecef;cursor: default;
+        }
+        .modal-footer {
+            padding: 14px 22px;border-top: 1px solid #eee;
+            display: flex;justify-content: flex-end;gap: 10px;
+        }
         .page {display: none;}
         .page.active {display: block;}
+        /* 首页样式 */
         .home-wrap {
             width: 100%;min-height: calc(100vh - 50px - 50px);
             background: linear-gradient(135deg, #edf6f9 0%, #e8f4f8 100%);
@@ -181,6 +244,7 @@
     </div>
 
     <div class="main-content">
+        <!-- 首页 -->
         <div id="homePage" class="page active">
             <div class="home-wrap">
                 <h1 class="home-main-title">辛庄村管理系统</h1>
@@ -195,20 +259,41 @@
             </div>
         </div>
 
+        <!-- 台账列表页 -->
         <div id="listPage" class="page">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title" id="listTitle">分类数据</h3>
                     <div class="action-bar">
-                        <button class="btn btn-success" onclick="addNewRow()">新增</button>
+                        <button class="btn btn-success" onclick="openAddModal()">新增</button>
                         <button class="btn btn-info" onclick="openEdit()">编辑</button>
                         <button class="btn btn-primary" onclick="saveChanges()">保存</button>
                         <button class="btn btn-danger btn-sm" onclick="clearAllData()">清空全部</button>
                     </div>
                 </div>
                 <div id="listTableBox" style="padding:0 22px 22px">
-                    <div class="empty-state"><p>请点击左侧子菜单查看对应台账数据</p></div>
+                    <div class="empty-state">
+                        <i>📄</i>
+                        <p>请点击左侧子菜单查看对应台账数据</p>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增数据模态框 -->
+    <div class="modal-mask" id="addModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle">新增数据</h4>
+                <button class="modal-close" onclick="closeAddModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 动态生成表单内容 -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" onclick="closeAddModal()">取消</button>
+                <button class="btn btn-success" onclick="confirmAddData()">确定新增</button>
             </div>
         </div>
     </div>
@@ -271,16 +356,16 @@
             });
         }
 
-        // 渲染表格（动态匹配当前子菜单表头）
+        // 渲染表格（优化样式适配）
         function renderEditableTable(data) {
             const box = document.getElementById("listTableBox");
             if (!currentCategory || !tableHeaders[currentCategory]) {
-                box.innerHTML = '<div class="empty-state"><p>未找到对应台账配置</p></div>';
+                box.innerHTML = '<div class="empty-state"><i>⚠️</i><p>未找到对应台账配置</p></div>';
                 return;
             }
             const headers = tableHeaders[currentCategory];
             if (!data || data.length === 0) {
-                box.innerHTML = '<div class="empty-state"><p>当前分类暂无数据，请点击「新增」添加</p></div>';
+                box.innerHTML = '<div class="empty-state"><i>📄</i><p>当前分类暂无数据，请点击「新增」添加</p></div>';
                 return;
             }
             let html = '<table class="data-table"><thead><tr>';
@@ -304,7 +389,7 @@
                 inp.onkeydown = e => {
                     if (e.key === "Enter" && isEditMode) {
                         e.preventDefault();
-                        addNewRow();
+                        openAddModal();
                     }
                 };
             });
@@ -314,25 +399,58 @@
         function openEdit() {
             isEditMode = true;
             renderEditableTable(getFilterData());
-            alert("已开启编辑模式，可修改数据");
+            alert("✅ 已开启编辑模式，可修改数据");
         }
 
-        // 新增数据行（自动匹配当前表头）
-        function addNewRow() {
+        // 打开新增模态框
+        function openAddModal() {
+            if (!currentCategory || !tableHeaders[currentCategory]) return;
+            const headers = tableHeaders[currentCategory];
+            document.getElementById("modalTitle").innerText = "新增" + currentCategory + "数据";
+            // 动态生成表单
+            let formHtml = '';
+            headers.forEach(field => {
+                const isReadOnly = field === categoryKey;
+                const value = isReadOnly ? currentCategory : '';
+                formHtml += `
+                    <div class="form-item">
+                        <label class="form-label">${field}</label>
+                        <input type="text" class="form-input" data-field="${field}" value="${value}" ${isReadOnly ? 'readonly' : ''}>
+                    </div>
+                `;
+            });
+            document.getElementById("modalBody").innerHTML = formHtml;
+            // 显示模态框
+            document.getElementById("addModal").classList.add("active");
+        }
+
+        // 关闭新增模态框
+        function closeAddModal() {
+            document.getElementById("addModal").classList.remove("active");
+        }
+
+        // 确认新增数据
+        function confirmAddData() {
             if (!currentCategory || !tableHeaders[currentCategory]) return;
             const headers = tableHeaders[currentCategory];
             const newItem = {};
-            headers.forEach(h => {
-                newItem[h] = h === categoryKey ? currentCategory : "";
+            // 收集表单数据
+            document.querySelectorAll("#modalBody .form-input").forEach(input => {
+                const field = input.dataset.field;
+                newItem[field] = input.value;
             });
+            // 新增到全局数据
             totalData.push(newItem);
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
+            // 关闭模态框，重新渲染表格
+            closeAddModal();
             renderEditableTable(getFilterData());
+            alert("✅ 数据新增成功！");
         }
 
         // 删除单行数据
         function deleteRow(index) {
-            if (!confirm("确定删除本条数据？")) return;
+            if (!confirm("确定删除本条数据？此操作不可恢复")) return;
             const list = getFilterData();
             const idx = totalData.indexOf(list[index]);
             if (idx > -1) {
@@ -369,13 +487,13 @@
                     const wb = XLSX.read(ev.target.result, { type: "array" });
                     const sheet = wb.SheetNames[0];
                     const arr = XLSX.utils.sheet_to_json(wb.Sheets[sheet]);
-                    if (arr.length === 0) { alert("表格为空"); return; }
+                    if (arr.length === 0) { alert("表格为空，无数据可导入"); return; }
                     totalData = totalData.concat(arr);
                     localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                    alert("✅ 导入成功 " + arr.length + " 条数据");
+                    alert("✅ 导入成功，共导入 " + arr.length + " 条数据");
                     switchPage(currentCategory);
                 } catch (err) {
-                    alert("导入失败，请检查表格格式");
+                    alert("导入失败，请检查表格格式是否正确");
                     console.error(err);
                 }
                 e.target.value = "";
@@ -399,6 +517,11 @@
                 const arrow = this.querySelector(".arrow");
                 if (arrow) parent.classList.toggle("open");
             });
+        });
+
+        // 点击模态框遮罩关闭
+        document.getElementById("addModal").addEventListener("click", function(e) {
+            if (e.target === this) closeAddModal();
         });
 
         // 页面初始化
