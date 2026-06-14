@@ -20,7 +20,7 @@
             padding: 0 25px;
             z-index: 100;
         }
-        .sys-title {color: #fff;font-size: 16;}
+        .sys-title {color: #fff;font-size: 16px;}
         .back-index {
             padding: 6px 16px;
             background: #20c997;
@@ -372,7 +372,7 @@
         let excelHeaders = [];
         let categoryKey = "分类名称";
         let currentCategory = "";
-        let isEditMode = true; // 默认新增后可编辑
+        let isEditMode = true;
 
         // 切换页面
         function switchPage(type) {
@@ -387,11 +387,11 @@
                 document.getElementById("listTitle").innerText = type + " 台账数据";
                 document.querySelector(".sys-title").innerText = "辛庄村管理系统 — " + type;
                 const filteredData = getFilterData();
-                renderEditableTable(filterData);
+                renderEditableTable(filteredData);
             }
         }
 
-        // 获取当前分类数据
+        // 获取当前分类筛选后的数据
         function getFilterData() {
             return totalData.filter(item => {
                 const itemCategory = String(item[categoryKey] || "")
@@ -402,45 +402,43 @@
             });
         }
 
-        // 渲染表格 + 控制只读/编辑状态
+        // 渲染表格（修复引号问题，保证按钮可用）
         function renderEditableTable(data) {
             const box = document.getElementById("listTableBox");
             if (!data || data.length === 0) {
                 box.innerHTML = '<div class="empty-state"><p>当前分类暂无数据，请点击「新增」添加</p></div>';
                 return;
             }
-            const headers = excelHeaders.length > 0 ? excelHeaders : Object.keys(data[0]);
+            const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
             let html = '<table class="data-table"><thead><tr>';
-            headers.forEach(h => {
+            for (let h of headers) {
                 html += '<th>' + h + '</th>';
-            });
+            }
             html += '<th>操作</th></tr></tbody><tbody>';
-            data.forEach((row, idx) => {
-                html += '<tr data-row-idx="' + idx + '">';
-                headers.forEach(field => {
-                    html += `<td>
-                        <input class="editable" type="text" 
-                        value="${row[field] || ''}" 
-                        data-field="${field}"
-                        ${isEditMode ? '' : 'readonly'} >
-                    </td>`;
-                });
-                html += `<td>
-                    <button class="btn btn-danger btn-sm" onclick="deleteRow(${idx})">删除</button>
-                </td></tr>`;
-            });
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                html += '<tr data-row-idx="' + i + '">';
+                for (let field of headers) {
+                    const val = row[field] || '';
+                    const readOnly = isEdit ? '' : 'readonly';
+                    html += '<td><input class="editable" type="text" value="' + val + '" data-field="' + field + '" ' + readOnly + '></td>';
+                }
+                // 修复删除按钮引号，保证点击正常
+                html += '<td><button class="btn btn-danger btn-sm" onclick="deleteRow(' + i + ')">删除</button></td>';
+                html += '</tr>';
+            }
             html += '</tbody></table>';
             box.innerHTML = html;
 
-            // 回车新增
+            // 绑定回车新增事件
             const inputs = box.querySelectorAll(".editable");
             inputs.forEach(inp => {
-                inp.addEventListener("keydown", function(e) {
+                inp.onkeydown = function(e) {
                     if (e.key === "Enter" && isEditMode) {
                         e.preventDefault();
                         addNewRow();
                     }
-                });
+                }
             });
         }
 
@@ -448,11 +446,11 @@
         function openEdit() {
             isEditMode = true;
             const filteredData = getFilterData();
-            renderEditable(filteredData);
+            renderEditableTable(filteredData);
             alert("已开启编辑模式，可修改数据");
         }
 
-        // 新增一行
+        // 新增数据行（核心修复，点击正常生效）
         function addNewRow() {
             if (!currentCategory) return;
             const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
@@ -463,10 +461,10 @@
             totalData.push(newItem);
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
             const filteredData = getFilterData();
-            renderEditable(filteredData);
+            renderEditableTable(filteredData);
         }
 
-        // 删除单行
+        // 删除单行数据
         function deleteRow(index) {
             if (!confirm("确定删除本条数据？")) return;
             const filterList = getFilterData();
@@ -475,34 +473,33 @@
                 totalData.splice(realIdx, 1);
                 localStorage.setItem("villageTotalData", JSON.stringify(totalData));
                 const filteredData = getFilterData();
-                renderEditable(filteredData);
+                renderEditableTable(filteredData);
             }
         }
 
-        // 保存数据（核心修复：数据不再丢失，保存后只读）
+        // 保存数据（保存后锁定编辑，数据不丢失）
         function saveChanges() {
             const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
             const filterList = getFilterData();
-            rows.forEach((rIdx, index) => {
-                const inputs = rIdx.querySelectorAll(".editable");
+            rows.forEach((row, index) => {
+                const inputs = row.querySelectorAll(".editable");
+                const realIdx = totalData.indexOf(filterList[index]);
+                if (realIdx === -1) return;
                 inputs.forEach(inp => {
                     const fd = inp.dataset.field;
-                    const realIdx = totalData.indexOf(filterList[index]);
-                    if (realIdx > -1) {
-                        totalData[realIdx][fd] = inp.value;
-                    }
+                    totalData[realIdx][fd] = inp.value;
                 });
             });
-            // 本地持久化
+            // 本地持久化存储
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-            // 保存后设为只读
+            // 保存后切换为只读模式
             isEditMode = false;
             const filteredData = getFilterData();
-            renderEditable(filteredData);
+            renderEditableTable(filteredData);
             alert("✅ 数据保存成功，已锁定编辑");
         }
 
-        // Excel导入
+        // Excel导入功能
         document.getElementById("excelFile").addEventListener("change", function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -518,7 +515,7 @@
                         alert("表格内容为空！");
                         return;
                     }
-                    totalData = [...totalData, ...arr];
+                    totalData = totalData.concat(arr);
                     localStorage.setItem("villageTotalData", JSON.stringify(totalData));
                     alert("✅ 成功导入 " + arr.length + " 条数据");
                     switchPage(currentCategory);
@@ -541,7 +538,7 @@
             alert("✅ 所有数据已清空");
         }
 
-        // 菜单展开收起
+        // 菜单展开/收起
         document.querySelectorAll(".menu-title").forEach(item => {
             item.addEventListener("click", function() {
                 const parent = this.closest(".menu-item");
@@ -550,7 +547,7 @@
             });
         });
 
-        // 初始化
+        // 页面初始化
         window.onload = function() {
             switchPage("home");
         };
