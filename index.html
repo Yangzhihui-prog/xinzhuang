@@ -48,7 +48,7 @@
         .sidebar-header h2 {font-size: 18px;margin-bottom: 6px;}
         .sidebar-header p {font-size: 13px;opacity: 0.85;}
         .menu {list-style: none;}
-        .menu-item {border-bottom: 1px solid rgba(255,255,0.05);}
+        .menu-item {border-bottom: 1px solid rgba(255,255,255,0.05);}
         .menu-title {
             display: flex;
             align-items: center;
@@ -334,7 +334,6 @@
                 <div class="home-line"></div>
                 <p class="home-sub-title">村级台账综合管理平台</p>
                 <p class="home-desc">规范村级台账 · 提升管理效率 · 服务乡村发展</p>
-                <!-- 首页新增导入、清空按钮 -->
                 <div class="home-btn-group">
                     <button class="btn btn-primary" onclick="document.getElementById('excelFile').click()">批量导入Excel</button>
                     <button class="btn btn-danger" onclick="clearAllData()">清空全部数据</button>
@@ -349,15 +348,14 @@
                 <div class="card-header">
                     <h3 class="card-title" id="listTitle">分类数据</h3>
                     <div class="action-bar">
-                        <button class="btn btn-success" onclick="addNewRow()">新增数据</button>
+                        <!-- 按钮文字改为 新增 -->
+                        <button class="btn btn-success" onclick="addNewRow()">新增</button>
                         <button class="btn btn-primary" onclick="saveChanges()">保存修改</button>
                         <button class="btn btn-danger btn-sm" onclick="clearAllData()">清空全部</button>
                     </div>
                 </div>
                 <div id="listTableBox" style="padding: 0 22px 22px;">
-                    <div class="empty-state">
-                        <p>当前分类暂无数据，请点击「新增数据」添加</p>
-                    </div>
+                    <div class="empty-state"><p>当前分类暂无数据，请点击「新增」添加</p></div>
                 </div>
             </div>
         </div>
@@ -395,28 +393,30 @@
             }
         }
 
-        // 渲染美化表格 + 回车新增
+        // 渲染美化表格（修复语法错误，保证按钮可用）
         function renderEditableTable(data, boxId) {
             const box = document.getElementById(boxId);
             if (!data || data.length === 0) {
-                box.innerHTML = `<div class="empty-state"><p>当前分类暂无数据，请点击「新增数据」添加</p></div>`;
+                box.innerHTML = '<div class="empty-state"><p>当前分类暂无数据，请点击「新增」添加</p></div>';
                 return;
             }
             const headers = excelHeaders.length > 0 ? excelHeaders : Object.keys(data[0]);
-            let html = `<table class="data-table"><thead><tr>`;
-            headers.forEach(h => html += `<th>${h}</th>`);
-            html += `<th>操作</th></tr></thead><tbody>`;
-            data.forEach((row, idx) => {
-                html += `<tr data-row-idx="${idx}">`;
-                headers.forEach(field => {
-                    html += `<td><input class="editable" type="text" value="${row[field] || ''}" data-field="${field}"></td>`;
-                });
-                html += `<td><button class="btn btn-danger btn-sm" onclick="deleteRow(${idx})">删除</button></td></tr>`;
+            let html = '<table class="data-table"><thead><tr>';
+            headers.forEach(h => {
+                html += '<th>' + h + '</th>';
             });
-            html += `</tbody></table>`;
-            box.innerHTML;
+            html += '<th>操作</th></tr></tbody><tbody>';
+            data.forEach((row, idx) => {
+                html += '<tr data-row-idx="' + idx + '">';
+                headers.forEach(field => {
+                    html += '<td><input class="editable" type="text" value="' + (row[field] || '') + '" data-field="' + field + '"></td>';
+                });
+                html += '<td><button class="btn btn-danger btn-sm" onclick="deleteRow(' + idx + ')">删除</button></td></tr>';
+            });
+            html += '</tbody></table>';
+            box.innerHTML = html;
 
-            // 回车快速新增
+            // 绑定回车快速新增
             const inputs = box.querySelectorAll(".editable");
             inputs.forEach(inp => {
                 inp.addEventListener("keydown", function(e) {
@@ -428,7 +428,7 @@
             });
         }
 
-        // 新增一行
+        // 新增一行数据
         function addNewRow() {
             if (!currentCategory) return;
             const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
@@ -459,7 +459,7 @@
 
         // 保存修改
         function saveChanges() {
-            const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
+            const rows = document.querySelectorAll("#listTable tr[data-row-idx]");
             rows.forEach((row, rIdx) => {
                 const inputs = row.querySelectorAll(".editable");
                 inputs.forEach(inp => {
@@ -497,7 +497,7 @@
                     }
                     totalData = [...totalData, ...arr];
                     localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                    alert(`✅ 成功导入 ${arr.length} 条数据`);
+                    alert("✅ 成功导入 " + arr.length + " 条数据");
                     switchPage(currentCategory);
                 } catch (err) {
                     alert("导入失败，请检查表格格式");
