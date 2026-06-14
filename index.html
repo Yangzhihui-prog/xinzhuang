@@ -265,7 +265,7 @@
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('在职党员')">在职党员</a></li>
                     <li><a href="#" onclick="switchPage('流动党员')">流动党员</a></li>
-                    <li><a href="#" onclick="switchPage('老党员台账')">老党员台账</a></li>
+                    <li><a href="#" onclick="oldPartyMemberAccount()">老党员台账</a></li>
                 </ul>
             </li>
             <li class="menu-item">
@@ -360,21 +360,16 @@
     </div>
 
     <script>
-        // ========== 登录密码 ==========
-        const PASSWORD = "admin123"; 
+        // 登录密码 可自行修改
+        const PASSWORD = "admin123";
 
-        // ========== 全局共享数据（在这里粘贴你Excel导出的JSON数据） ==========
-        // 1.你导入Excel后，数据会存在下面这个数组里，所有人打开网页都会加载
-        // 2.更新数据后，重新粘贴新数组到此处，再上传GitHub即可全员同步
-        let totalData = [
-            // 在这里替换成你的真实数据
-        ];
-
+        // 数据存储在浏览器本地，每人独立
+        let totalData = JSON.parse(localStorage.getItem("villageTotalData") || "[]");
         let categoryKey = "分类名称";
         let currentCategory = "";
         let isEditMode = false;
 
-        // 表头配置
+        // 所有分类表头配置
         const tableHeaders = {
             '外出务工': ['分类名称', '姓名', '身份证号', '联系电话', '家庭住址', '务工地点', '务工单位', '从事行业', '月收入', '外出时间', '返乡时间', '紧急联系人', '备注'],
             '本地务工': ['分类名称', '姓名', '身份证号', '联系电话', '家庭住址', '务工单位', '从事岗位', '月收入', '入职时间', '社保缴纳情况', '备注'],
@@ -400,23 +395,27 @@
             '土地流转': ['分类名称', '流转编号', '地块名称', '位置', '面积(亩)', '转出方', '转入方', '流转类型', '流转期限', '流转价格(元/年)', '合同编号', '备注']
         };
 
-        // 标准化分类
+        // 标准化分类名称（去空格、全角转半角）
         function standardizeCategoryName(name) {
             if (!name) return '';
-            return String(name).trim().replace(/\s+/g, '').replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0)).toLowerCase();
+            return String(name)
+                .trim()
+                .replace(/\s+/g, '')
+                .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
+                .toLowerCase();
         }
 
-        // 密码验证
+        // 密码校验
         function checkPwd() {
             const val = document.getElementById('pwdInput').value.trim();
-            if(val === PASSWORD){
+            if (val === PASSWORD) {
                 document.getElementById('loginModal').style.display = 'none';
-            }else{
+            } else {
                 document.getElementById('loginTip').style.display = 'block';
             }
         }
 
-        // 切换页面
+        // 切换页面/菜单
         function switchPage(type) {
             document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
             if (type === "home") {
@@ -432,8 +431,12 @@
                 renderEditableTable(getFilterData());
             }
         }
+        // 兼容老党员台账菜单点击
+        function oldPartyMemberAccount(){
+            switchPage('老党员台账');
+        }
 
-        // 筛选数据（过滤空白行）
+        // 筛选有效数据，自动过滤纯空白行
         function getFilterData() {
             if (!currentCategory) return [];
             const targetStandard = standardizeCategoryName(currentCategory);
@@ -475,6 +478,7 @@
             box.innerHTML = html;
         }
 
+        // 开启编辑
         function openEdit() {
             if (!currentCategory) return;
             isEditMode = true;
@@ -482,9 +486,10 @@
             alert("✅ 已开启编辑模式");
         }
 
+        // 保存修改（同步到本地存储）
         function saveChanges() {
             if (!isEditMode) {
-                alert("⚠️ 请先点击「编辑」");
+                alert("⚠️ 请先点击「编辑」按钮");
                 return;
             }
             const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
@@ -496,37 +501,47 @@
                     filterData[idx][field] = inputs[i].value;
                 });
             });
-            alert("✅ 数据保存成功（仅本地生效，如需全员同步，请更新代码内totalData数组）");
+            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
             isEditMode = false;
             renderEditableTable(filterData);
+            alert("✅ 保存成功，数据已存在本地");
         }
 
+        // 删除单条数据
         function deleteRow(index) {
-            if (!confirm("确定删除？")) return;
+            if (!confirm("确定删除本条数据？")) return;
             const filterData = getFilterData();
             const targetStandard = standardizeCategoryName(currentCategory);
-            const globalIndex = totalData.findIndex(item => standardizeCategoryName(item[categoryKey]) === targetStandard && item === filterData[index]);
+            const globalIndex = totalData.findIndex(item =>
+                standardizeCategoryName(item[categoryKey]) === targetStandard && item === filter[index]
+            );
             if (globalIndex !== -1) {
                 totalData.splice(globalIndex, 1);
+                localStorage.setItem("villageTotalData", JSON.stringify(totalData));
                 renderEditableTable(getFilterData());
             }
         }
 
+        // 清空当前分类
         function clearCurrentData() {
-            if (!confirm("确定清空当前分类？")) return;
+            if (!confirm(`确定清空【${currentCategory}】所有数据？`)) return;
             const targetStandard = standardizeCategoryName(currentCategory);
             totalData = totalData.filter(item => standardizeCategoryName(item[categoryKey]) !== targetStandard);
+            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
             renderEditableTable(getFilterData());
-            alert("✅ 已清空");
+            alert("✅ 当前分类数据已清空");
         }
 
+        // 清空全部数据
         function clearAllData() {
-            if (!confirm("确定清空全部数据？")) return;
+            if (!confirm("确定清空系统所有数据？")) return;
             totalData = [];
+            localStorage.removeItem("villageTotalData");
             if (currentCategory) renderEditableTable([]);
-            alert("✅ 已清空");
+            alert("✅ 所有数据已清空");
         }
 
+        // 打开新增弹窗
         function openAddModal() {
             if (!currentCategory || !tableHeaders[currentCategory]) return;
             const headers = tableHeaders[currentCategory];
@@ -546,10 +561,12 @@
             document.getElementById("addModal").classList.add("active");
         }
 
+        // 关闭新增弹窗
         function closeAddModal() {
             document.getElementById("addModal").classList.remove("active");
         }
 
+        // 确认新增
         function confirmAddData() {
             if (!currentCategory || !tableHeaders[currentCategory]) return;
             const headers = tableHeaders[currentCategory];
@@ -558,16 +575,18 @@
                 newItem[input.dataset.field] = input.value;
             });
             totalData.push(newItem);
+            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
             closeAddModal();
             renderEditableTable(getFilterData());
-            alert("✅ 新增成功（仅本地生效，如需全员同步，请更新代码内totalData数组）");
+            alert("✅ 新增成功");
         }
 
-        document.getElementById("addModal").addEventListener("click", function(e) {
+        // 点击弹窗外部关闭
+        document.getElementById("addModal").addEventListener("click", function (e) {
             if (e.target === this) closeAddModal();
         });
 
-        // Excel导入（导入后同步到全局数组）
+        // Excel导入
         document.getElementById("excelFile").addEventListener("change", e => {
             const file = e.target.files[0];
             if (!file) return;
@@ -581,36 +600,40 @@
                         const headers = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0] || [];
                         const arr = XLSX.utils.sheet_to_json(sheet);
                         if (arr.length > 0) {
-                            categoryKey = headers.find(h => standardizeCategoryName(h) === standardizeCategoryName("分类名称")) || headers[0];
+                            categoryKey = headers.find(h =>
+                                standardizeCategoryName(h) === standardizeCategoryName("分类名称")
+                            ) || headers[0];
                             allImportData = allImportData.concat(arr);
                         }
                     });
                     if (allImportData.length === 0) {
-                        alert("Excel无数据");
+                        alert("Excel中无有效数据");
                         return;
                     }
                     totalData = totalData.concat(allImportData);
-                    alert(`✅ 导入成功！共 ${allImportData.length} 条数据\n【重要】请把代码里 totalData 数组替换为新数据，再上传GitHub，别人才能看到`);
+                    localStorage.setItem("villageTotalData", JSON.stringify(totalData));
+                    alert(`✅ 导入成功！共导入 ${allImportData.length} 条数据`);
                     if (currentCategory) renderEditableTable(getFilterData());
                 } catch (err) {
-                    alert("导入失败");
+                    alert("Excel导入失败，请检查文件");
                 }
                 e.target.value = "";
             };
             reader.readAsArrayBuffer(file);
         });
 
-        // 菜单展开
+        // 菜单展开/收起
         document.querySelectorAll(".menu-item > .menu-title").forEach(title => {
             if (title.parentElement.querySelector(".submenu")) {
-                title.addEventListener("click", function(e) {
+                title.addEventListener("click", function (e) {
                     e.preventDefault();
                     this.parentElement.classList.toggle("open");
                 });
             }
         });
 
-        window.onload = function() {
+        // 页面初始化
+        window.onload = function () {
             document.querySelector(".menu-item").classList.add("open");
         };
     </script>
