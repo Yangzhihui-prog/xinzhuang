@@ -41,14 +41,12 @@
         .data-table th {background: #f8f9fa;color: #333;font-weight: 500;}
         .data-table tr:hover {background: #f8f9fa;}
         .empty-state {text-align: center;padding: 50px;color: #999;}
-        .empty-state i {font-size: 48px;margin-bottom: 15px;display: block;}
+        .info-box {background: #e9f5f9;padding: 15px;border-radius: 4px;margin-bottom: 20px;color: #0c5460;font-size: 13px;line-height: 1.6;}
         .page {display: none;}
         .page.active {display: block;}
-        .info-box {background: #e9f5f9;padding: 15px;border-radius: 4px;margin-bottom: 20px;color: #0c5460;font-size: 13px;line-height: 1.6;}
     </style>
 </head>
 <body>
-    <!-- 还原你原来的完整侧边栏菜单 -->
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>辛庄村管理系统</h2>
@@ -56,7 +54,7 @@
         </div>
         <ul class="menu">
             <li class="menu-item">
-                <div class="menu-title" onclick="showPage('home')">
+                <div class="menu-title" onclick="switchPage('home')">
                     <span class="icon">🏠</span>
                     <span>首页</span>
                 </div>
@@ -68,9 +66,9 @@
                     <span class="arrow">▲</span>
                 </div>
                 <ul class="submenu">
-                    <li><a href="#" onclick="showPage('work-out')">外出务工</a></li>
-                    <li><a href="#" onclick="showPage('work-local')">本地务工</a></li>
-                    <li><a href="#" onclick="showPage('work-training')">技能培训</a></li>
+                    <li><a href="#" onclick="switchPage('外出务工')">外出务工</a></li>
+                    <li><a href="#" onclick="switchPage('本地务工')">本地务工</a></li>
+                    <li><a href="#" onclick="switchPage('技能培训')">技能培训</a></li>
                 </ul>
             </li>
             <li class="menu-item">
@@ -80,10 +78,10 @@
                     <span class="arrow">▲</span>
                 </div>
                 <ul class="submenu">
-                    <li><a href="#" onclick="showPage('village-resident')">常住人口</a></li>
-                    <li><a href="#" onclick="showPage('village-migrant')">流动人口</a></li>
-                    <li><a href="#" onclick="showPage('village-empty')">空挂户籍</a></li>
-                    <li><a href="#" onclick="showPage('village-key')">重点人员</a></li>
+                    <li><a href="#" onclick="switchPage('常住人口')">常住人口</a></li>
+                    <li><a href="#" onclick="switchPage('流动人口')">流动人口</a></li>
+                    <li><a href="#" onclick="switchPage('空挂户籍')">空挂户籍</a></li>
+                    <li><a href="#" onclick="switchPage('重点人员')">重点人员</a></li>
                 </ul>
             </li>
             <li class="menu-item">
@@ -93,9 +91,9 @@
                     <span class="arrow">▲</span>
                 </div>
                 <ul class="submenu">
-                    <li><a href="#" onclick="showPage('disabled-hearing')">视力听力残疾</a></li>
-                    <li><a href="#" onclick="showPage('disabled-physical')">肢体智力残疾</a></li>
-                    <li><a href="#" onclick="showPage('disabled-cert')">持证残疾台账</a></li>
+                    <li><a href="#" onclick="switchPage('视力听力残疾')">视力听力残疾</a></li>
+                    <li><a href="#" onclick="switchPage('肢体智力残疾')">肢体智力残疾</a></li>
+                    <li><a href="#" onclick="switchPage('持证残疾台账')">持证残疾台账</a></li>
                 </ul>
             </li>
             <li class="menu-item">
@@ -105,9 +103,9 @@
                     <span class="arrow">▲</span>
                 </div>
                 <ul class="submenu">
-                    <li><a href="#" onclick="showPage('party-onjob')">在职党员</a></li>
-                    <li><a href="#" onclick="showPage('party-floating')">流动党员</a></li>
-                    <li><a href="#" onclick="showPage('party-old')">老党员台账</a></li>
+                    <li><a href="#" onclick="switchPage('在职党员')">在职党员</a></li>
+                    <li><a href="#" onclick="switchPage('流动党员')">流动党员</a></li>
+                    <li><a href="#" onclick="switchPage('老党员台账')">老党员台账</a></li>
                 </ul>
             </li>
             <li class="menu-item">
@@ -117,9 +115,9 @@
                     <span class="arrow">▲</span>
                 </div>
                 <ul class="submenu">
-                    <li><a href="#" onclick="showPage('help-general')">一般脱贫户</a></li>
-                    <li><a href="#" onclick="showPage('help-unstable')">不稳定户</a></li>
-                    <li><a href="#" onclick="showPage('help-risk')">边缘易致贫户</a></li>
+                    <li><a href="#" onclick="switchPage('一般脱贫户')">一般脱贫户</a></li>
+                    <li><a href="#" onclick="switchPage('不稳定户')">不稳定户</a></li>
+                    <li><a href="#" onclick="switchPage('边缘易致贫户')">边缘易致贫户</a></li>
                 </ul>
             </li>
             <li class="menu-item">
@@ -129,9 +127,9 @@
                     <span class="arrow">▲</span>
                 </div>
                 <ul class="submenu">
-                    <li><a href="#" onclick="showPage('civil-low')">低保户</a></li>
-                    <li><a href="#" onclick="showPage('civil-poor')">特困户</a></li>
-                    <li><a href="#" onclick="showPage('civil-monitor')">监测户</a></li>
+                    <li><a href="#" onclick="switchPage('低保户')">低保户</a></li>
+                    <li><a href="#" onclick="switchPage('特困户')">特困户</a></li>
+                    <li><a href="#" onclick="switchPage('监测户')">监测户</a></li>
                 </ul>
             </li>
             <li class="menu-item">
@@ -141,56 +139,54 @@
                     <span class="arrow">▲</span>
                 </div>
                 <ul class="submenu">
-                    <li><a href="#" onclick="showPage('land-farm')">耕地信息</a></li>
-                    <li><a href="#" onclick="showPage('land-house')">宅基地</a></li>
-                    <li><a href="#" onclick="showPage('land-transfer')">土地流转</a></li>
+                    <li><a href="#" onclick="switchPage('耕地信息')">耕地信息</a></li>
+                    <li><a href="#" onclick="switchPage('宅基地')">宅基地</a></li>
+                    <li><a href="#" onclick="switchPage('土地流转')">土地流转</a></li>
                 </ul>
             </li>
         </ul>
     </div>
 
     <div class="top-bar">
-        <div class="sys-title">焦店镇辛庄村 - 村级管理平台</div>
-        <a href="#" class="back-index" onclick="showPage('home')">返回首页</a>
+        <div class="sys-title" id="topTitle">焦店镇辛庄村 - 村级管理平台</div>
+        <a href="#" class="back-index" onclick="switchPage('home')">返回首页</a>
     </div>
 
     <div class="main-content">
         <!-- 首页 -->
-        <div id="home-page" class="page active">
+        <div id="homePage" class="page active">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">系统首页 | 数据统一云端存储 多人实时共享</h3>
+                    <h3 class="card-title">数据总览</h3>
                     <div>
-                        <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">一键导入Excel台账</button>
+                        <button class="btn btn-primary" onclick="document.getElementById('excelFile').click()">导入Excel表格</button>
                         <button class="btn btn-danger" onclick="clearAllData()">清空全部数据</button>
-                        <input type="file" id="file-input" class="file-input" accept=".xlsx,.xls">
+                        <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls">
                     </div>
                 </div>
                 <div class="info-box">
-                    <strong>云端导入说明：</strong><br>
-                    1. Excel第一列固定为【分类标识】，匹配左侧菜单名称；<br>
-                    2. 后方可自定义任意列字段，导入后自动分类归档；<br>
-                    3. 所有数据存入浏览器本地，关闭页面数据不会丢失。
+                    <strong>使用说明：</strong><br>
+                    Excel 表格第一列表头请填写 <b>分类名称</b>，内容与左侧菜单名称一致，导入后自动分类到对应栏目。
                 </div>
-                <div id="data-container" class="card-body">
+                <div id="homeTableBox" class="card-body">
                     <div class="empty-state">
                         <i>📄</i>
-                        <p>暂无数据，请导入Excel台账</p>
+                        <p>暂无数据，请导入Excel表格</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 通用数据页面（所有子菜单共用） -->
-        <div id="data-page" class="page">
+        <!-- 分类数据页 -->
+        <div id="listPage" class="page">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title" id="current-page-title">数据列表</h3>
+                    <h3 class="card-title" id="listTitle">分类数据</h3>
                 </div>
-                <div id="page-data-container" class="card-body">
+                <div id="listTableBox" class="card-body">
                     <div class="empty-state">
                         <i>📄</i>
-                        <p>暂无数据，请先导入数据</p>
+                        <p>当前分类暂无数据</p>
                     </div>
                 </div>
             </div>
@@ -198,153 +194,96 @@
     </div>
 
     <script>
-        // 全局数据存储
-        let allData = JSON.parse(localStorage.getItem('villageData') || '[]');
-        const pageTitles = {
-            'work-out': '外出务工',
-            'work-local': '本地务工',
-            'work-training': '技能培训',
-            'village-resident': '常住人口',
-            'village-migrant': '流动人口',
-            'village-empty': '空挂户籍',
-            'village-key': '重点人员',
-            'disabled-hearing': '视力听力残疾',
-            'disabled-physical': '肢体智力残疾',
-            'disabled-cert': '持证残疾台账',
-            'party-onjob': '在职党员',
-            'party-floating': '流动党员',
-            'party-old': '老党员台账',
-            'help-general': '一般脱贫户',
-            'help-unstable': '不稳定户',
-            'help-risk': '边缘易致贫户',
-            'civil-low': '低保户',
-            'civil-poor': '特困户',
-            'civil-monitor': '监测户',
-            'land-farm': '耕地信息',
-            'land-house': '宅基地',
-            'land-transfer': '土地流转'
-        };
+        // 全局数据
+        let totalData = JSON.parse(localStorage.getItem("villageTotalData") || "[]");
+        let currentType = "home";
 
-        // 页面切换函数
-        function showPage(pageName) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            
-            if (pageName === 'home') {
-                document.getElementById('home-page').classList.add('active');
-                renderHomeData();
-            } else {
-                document.getElementById('data-page').classList.add('active');
-                document.getElementById('current-page-title').textContent = pageTitles[pageName] || '数据列表';
-                renderPageData(pageName);
+        // 切换页面
+        function switchPage(type) {
+            currentType = type;
+            document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+            if(type === "home"){
+                document.getElementById("homePage").classList.add("active");
+                document.getElementById("topTitle").innerText = "焦店镇辛庄村 - 数据总览";
+                renderTable(totalData, "homeTableBox");
+            }else{
+                document.getElementById("listPage").classList.add("active");
+                document.getElementById("listTitle").innerText = type + " 台账数据";
+                document.getElementById("topTitle").innerText = "当前栏目：" + type;
+                const filterData = totalData.filter(item => item["分类名称"] === type);
+                renderTable(filterData, "listTableBox");
             }
         }
 
-        // 渲染首页数据（全部数据）
-        function renderHomeData() {
-            const container = document.getElementById('data-container');
-            if (!allData || allData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i>📄</i>
-                        <p>暂无数据，请导入Excel台账</p>
-                    </div>
-                `;
+        // 渲染表格
+        function renderTable(data, boxId) {
+            const box = document.getElementById(boxId);
+            if(!data || data.length === 0){
+                box.innerHTML = `<div class="empty-state"><i>📄</i><p>暂无数据</p></div>`;
                 return;
             }
-            renderTable(allData, container);
-        }
-
-        // 渲染分类页面数据
-        function renderPageData(pageName) {
-            const container = document.getElementById('page-data-container');
-            const filteredData = allData.filter(item => item['分类标识'] === pageTitles[pageName]);
-            if (!filteredData || filteredData.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i>📄</i>
-                        <p>暂无数据，请先导入数据</p>
-                    </div>
-                `;
-                return;
-            }
-            renderTable(filteredData, container);
-        }
-
-        // 通用表格渲染函数
-        function renderTable(data, container) {
-            const headers = Object.keys(data[0]);
-            let tableHTML = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            ${headers.map(h => `<th>${h}</th>`).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            data.forEach(row => {
-                tableHTML += `<tr>`;
-                headers.forEach(h => {
-                    tableHTML += `<td>${row[h] || '-'}</td>`;
-                });
-                tableHTML += `</tr>`;
+            const keys = Object.keys(data[0]);
+            let html = `<table class="data-table"><thead><tr>`;
+            keys.forEach(k=> html += `<th>${k}</th>`);
+            html += `</tr></thead><tbody>`;
+            data.forEach(row=>{
+                html += `<tr>`;
+                keys.forEach(k=> html += `<td>${row[k] || ""}</td>`);
+                html += `</tr>`;
             });
-            tableHTML += `</tbody></table>`;
-            container.innerHTML = tableHTML;
+            html += `</tbody></table>`;
+            box.innerHTML = html;
         }
 
-        // Excel导入
-        document.getElementById('file-input').addEventListener('change', async function(e) {
+        // Excel导入 + 自动分类核心逻辑
+        document.getElementById("excelFile").addEventListener("change", function(e){
             const file = e.target.files[0];
-            if (!file) return;
+            if(!file) return;
             const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[sheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                    if (jsonData.length === 0) {
-                        alert("Excel文件为空，请检查文件内容");
+            reader.onload = function(ev){
+                try{
+                    const buf = ev.target.result;
+                    const wb = XLSX.read(buf, {type:"array"});
+                    const sheet = wb.Sheets[wb.SheetNames[0]];
+                    const arr = XLSX.utils.sheet_to_json(sheet);
+                    if(arr.length === 0){
+                        alert("表格内容为空！");
                         return;
                     }
-                    // 追加数据到全局存储
-                    allData = [...allData, ...jsonData];
-                    localStorage.setItem('villageData', JSON.stringify(allData));
-                    alert(`✅ 成功导入 ${jsonData.length} 条数据！`);
-                    showPage('home');
-                } catch (err) {
-                    console.error("❌ 导入Excel失败：", err);
-                    alert("导入失败：" + err.message);
+                    // 追加数据
+                    totalData = totalData.concat(arr);
+                    localStorage.setItem("villageTotalData", JSON.stringify(totalData));
+                    alert(`成功导入 ${arr.length} 条数据，已自动分类！`);
+                    switchPage("home");
+                }catch(err){
+                    alert("导入失败，请检查表格格式");
                 }
+                this.value = "";
             };
             reader.readAsArrayBuffer(file);
         });
 
         // 清空所有数据
-        function clearAllData() {
-            if (!confirm("确定要清空所有数据吗？此操作不可恢复！")) return;
-            allData = [];
-            localStorage.removeItem('villageData');
-            alert("✅ 数据已清空！");
-            showPage('home');
+        function clearAllData(){
+            if(!confirm("确定清空所有台账数据？此操作不可恢复！")) return;
+            totalData = [];
+            localStorage.removeItem("villageTotalData");
+            switchPage("home");
+            alert("数据已全部清空");
         }
 
         // 菜单展开收起
-        document.querySelectorAll('.menu-title').forEach(item => {
-            item.addEventListener('click', function() {
-                const menuItem = this.closest('.menu-item');
-                const arrow = this.querySelector('.arrow');
-                if (arrow) {
-                    menuItem.classList.toggle('open');
-                }
+        document.querySelectorAll(".menu-title").forEach(item=>{
+            item.addEventListener("click", function(){
+                const parent = this.closest(".menu-item");
+                const arrow = this.querySelector(".arrow");
+                if(arrow) parent.classList.toggle("open");
             });
         });
 
-        // 页面初始化
-        window.onload = function() {
-            showPage('home');
+        // 初始化
+        window.onload = function(){
+            switchPage("home");
         };
     </script>
 </body>
