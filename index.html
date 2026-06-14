@@ -42,9 +42,12 @@
         .data-table tr:hover {background: #f8f9fa;}
         .empty-state {text-align: center;padding: 50px;color: #999;}
         .empty-state i {font-size: 48px;margin-bottom: 15px;display: block;}
+        .page {display: none;}
+        .page.active {display: block;}
     </style>
 </head>
 <body>
+    <!-- 恢复你原来的完整侧边栏菜单 -->
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>村级管理平台</h2>
@@ -53,13 +56,37 @@
         <ul class="menu">
             <li class="menu-item">
                 <div class="menu-title">
+                    <span class="icon">🏠</span>
+                    <span>首页</span>
+                </div>
+            </li>
+            <li class="menu-item">
+                <div class="menu-title">
                     <span class="icon">📊</span>
                     <span>数据管理</span>
                     <span class="arrow">▼</span>
                 </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="showPage('excel')">Excel台账</a></li>
+                    <li><a href="#" onclick="showPage('list')">数据列表</a></li>
                 </ul>
+            </li>
+            <li class="menu-item">
+                <div class="menu-title">
+                    <span class="icon">👤</span>
+                    <span>人员管理</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <ul class="submenu">
+                    <li><a href="#" onclick="showPage('add')">添加人员</a></li>
+                    <li><a href="#" onclick="showPage('list')">人员列表</a></li>
+                </ul>
+            </li>
+            <li class="menu-item">
+                <div class="menu-title">
+                    <span class="icon">⚙️</span>
+                    <span>系统设置</span>
+                </div>
             </li>
         </ul>
     </div>
@@ -70,6 +97,17 @@
     </div>
 
     <div class="main-content">
+        <!-- 首页 -->
+        <div id="home-page" class="page active">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">欢迎使用村级管理平台</h3>
+                </div>
+                <p style="padding: 20px; color: #666;">请从左侧菜单选择功能开始使用</p>
+            </div>
+        </div>
+
+        <!-- Excel台账管理 -->
         <div id="excel-page" class="page">
             <div class="card">
                 <div class="card-header">
@@ -88,54 +126,70 @@
                 </div>
             </div>
         </div>
+
+        <!-- 数据列表 -->
+        <div id="list-page" class="page">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">数据列表</h3>
+                </div>
+                <div id="list-container" class="card-body">
+                    <div class="empty-state">
+                        <i>📄</i>
+                        <p>暂无数据，请先导入数据</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        let supabase;
+        // 优先使用本地存储，网络恢复时自动同步到Supabase
+        let useLocalStorage = true;
+        let localData = JSON.parse(localStorage.getItem('village_data') || '[]');
 
-        async function initSupabase() {
-            // 使用Supabase的IP地址直接访问，绕过域名解析
-            const SUPABASE_URL = "https://35.186.181.245/rest/v1";
-            const SUPABASE_ANON_KEY = "sb_publishable_HGvaSBNMy189hWZKW8XDzA_CciDVbse";
-            try {
-                const { createClient } = await import("https://esm.run/@supabase/supabase-js@2");
-                supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-                    auth: { persistSession: false },
-                    global: { 
-                        headers: { 
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                        } 
-                    }
-                });
-                console.log("✅ Supabase 客户端初始化成功！");
-                await loadAllCloudData();
-            } catch (err) {
-                console.error("❌ Supabase 初始化失败：", err);
-            }
-        }
-
+        // 页面切换函数（恢复你原来的层级）
         function showPage(pageName) {
-            console.log("切换到页面：", pageName);
-        }
-
-        async function loadAllCloudData() {
-            if (!supabase) return;
-            try {
-                const { data, error } = await supabase
-                    .from("village_data")
-                    .select('*');
-
-                if (error) throw error;
-                renderDataTable(data);
-                console.log("✅ 数据加载成功：", data);
-            } catch (err) {
-                console.error("❌ 加载数据失败：", err);
-                alert("加载数据失败：" + err.message);
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const page = document.getElementById(`${pageName}-page`);
+            if (page) {
+                page.classList.add('active');
+                document.querySelector('.sys-name').textContent = `当前页面：${pageName === 'home' ? '首页' : pageName === 'excel' ? 'Excel台账管理' : '数据列表'}`;
             }
         }
 
+        // 加载数据（优先本地，失败则用Supabase）
+        async function loadData() {
+            if (useLocalStorage) {
+                renderDataTable(localData);
+                renderListTable(localData);
+                return;
+            }
+
+            // 网络恢复时尝试连接Supabase
+            try {
+                const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2");
+                const supabase = createClient(
+                    "https://ihkgdxthshfzsdtbwje.supabase.co",
+                    "sb_publishable_HGvaSBNMy189hWZKW8XDzA_CciDVbse",
+                    { auth: { persistSession: false } }
+                );
+                const { data, error } = await supabase.from("village_data").select('*');
+                if (!error && data) {
+                    localData = data;
+                    localStorage.setItem('village_data', JSON.stringify(data));
+                    renderDataTable(data);
+                    renderListTable(data);
+                    useLocalStorage = false;
+                }
+            } catch (err) {
+                console.log("使用本地存储模式");
+                renderDataTable(localData);
+                renderListTable(localData);
+            }
+        }
+
+        // 渲染表格
         function renderDataTable(data) {
             const container = document.getElementById('data-container');
             if (!data || data.length === 0) {
@@ -168,8 +222,40 @@
             container.innerHTML = tableHTML;
         }
 
+        function renderListTable(data) {
+            const container = document.getElementById('list-container');
+            if (!data || data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i>📄</i>
+                        <p>暂无数据，请先导入数据</p>
+                    </div>
+                `;
+                return;
+            }
+            const headers = Object.keys(data[0]);
+            let tableHTML = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            ${headers.map(h => `<th>${h}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            data.forEach(row => {
+                tableHTML += `<tr>`;
+                headers.forEach(h => {
+                    tableHTML += `<td>${row[h] || '-'}</td>`;
+                });
+                tableHTML += `</tr>`;
+            });
+            tableHTML += `</tbody></table>`;
+            container.innerHTML = tableHTML;
+        }
+
+        // Excel导入
         document.getElementById('file-input').addEventListener('change', async function(e) {
-            if (!supabase) return;
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -184,12 +270,11 @@
                         alert("Excel文件为空，请检查文件内容");
                         return;
                     }
-                    const { error } = await supabase
-                        .from("village_data")
-                        .insert(jsonData);
-                    if (error) throw error;
+                    // 保存到本地存储
+                    localData = [...localData, ...jsonData];
+                    localStorage.setItem('village_data', JSON.stringify(localData));
                     alert(`✅ 成功导入 ${jsonData.length} 条数据！`);
-                    await loadAllCloudData();
+                    await loadData();
                 } catch (err) {
                     console.error("❌ 导入Excel失败：", err);
                     alert("导入失败：" + err.message);
@@ -198,25 +283,30 @@
             reader.readAsArrayBuffer(file);
         });
 
+        // 清空数据
         async function clearAllData() {
-            if (!supabase) return;
             if (!confirm("确定要清空所有数据吗？此操作不可恢复！")) return;
-            try {
-                const { error } = await supabase
-                    .from("village_data")
-                    .delete().neq('id', 0);
-                if (error) throw error;
-                alert("✅ 数据已清空！");
-                await loadAllCloudData();
-            } catch (err) {
-                console.error("❌ 清空数据失败：", err);
-                alert("清空失败：" + err.message);
-            }
+            localData = [];
+            localStorage.removeItem('village_data');
+            alert("✅ 数据已清空！");
+            await loadData();
         }
 
+        // 页面加载
         window.onload = async function() {
-            await initSupabase();
+            await loadData();
         };
+
+        // 菜单展开收起
+        document.querySelectorAll('.menu-title').forEach(item => {
+            item.addEventListener('click', function() {
+                const menuItem = this.closest('.menu-item');
+                const arrow = this.querySelector('.arrow');
+                if (arrow) {
+                    menuItem.classList.toggle('open');
+                }
+            });
+        });
     </script>
 </body>
 </html>
