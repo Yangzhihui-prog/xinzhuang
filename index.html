@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         * {margin: 0;padding: 0;box-sizing: border-box;}
-        body {font-family: "Microsoft Yahei",sans-serif;background: #f4f6f8;display: flex;}
+        body {font-family: "Microsoft Yahei", sans-serif;background: #f4f6f8;display: flex;}
         /* 顶部导航栏 */
         .top-bar {
             position: fixed;top: 0;left: 220px;right: 0;height: 50px;
@@ -54,7 +54,7 @@
             min-width: calc(100vw - 220px);
         }
         .card {
-            background: #fff;border-radius: 8px;box-shadow: 0 2px 12px rgba(0,0,0.08);
+            background: #fff;border-radius: 8px;box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             margin-bottom: 20px;overflow: hidden;
         }
         .card-header {
@@ -75,8 +75,8 @@
         .btn-info:hover {background: #138496;}
         .btn-primary {background: #fd7e14;color: #fff;}
         .btn-primary:hover {background: #e67312;}
-        .btn-danger {background: #c0392b;color: #fff;}
-        .btn-danger:hover {background: #a93226;}
+        .btn-danger {background: #dc3545;color: #fff;}
+        .btn-danger:hover {background: #c82333;}
         .btn-sm {padding: 5px 10px;font-size: 12px;}
         .action-bar {display: flex;gap: 10px;align-items: center;flex-wrap: wrap;}
         /* 表格核心优化样式 */
@@ -209,9 +209,16 @@
             <p>焦店镇村级台账平台</p>
         </div>
         <ul class="menu">
-            <li class="menu-item"><div class="menu-title" onclick="switchPage('home')"><span class="icon">🏠</span>首页</div></li>
             <li class="menu-item">
-                <div class="menu-title"><span class="icon">👷</span>务工信息<span class="arrow">▼</span></div>
+                <div class="menu-title" onclick="switchPage('home')">
+                    <span class="icon">🏠</span>首页
+                </div>
+            </li>
+            <li class="menu-item">
+                <div class="menu-title">
+                    <span class="icon">👷</span>务工信息
+                    <span class="arrow">▲</span>
+                </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('外出务工')">外出务工</a></li>
                     <li><a href="#" onclick="switchPage('本地务工')">本地务工</a></li>
@@ -219,7 +226,10 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title"><span class="icon">👥</span>村民信息<span class="arrow">▼</span></div>
+                <div class="menu-title">
+                    <span class="icon">👥</span>村民信息
+                    <span class="arrow">▼</span>
+                </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('常住人口')">常住人口</a></li>
                     <li><a href="#" onclick="switchPage('流动人口')">流动人口</a></li>
@@ -228,7 +238,10 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title"><span class="icon">♿</span>特殊群体<span class="arrow">▼</span></div>
+                <div class="menu-title">
+                    <span class="icon">♿</span>特殊群体
+                    <span class="arrow">▼</span>
+                </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('视力听力残疾')">视力听力残疾</a></li>
                     <li><a href="#" onclick="switchPage('肢体智力残疾')">肢体智力残疾</a></li>
@@ -236,7 +249,10 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title"><span class="icon">⭐</span>党员管理<span class="arrow">▼</span></div>
+                <div class="menu-title">
+                    <span class="icon">⭐</span>党员管理
+                    <span class="arrow">▼</span>
+                </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('在职党员')">在职党员</a></li>
                     <li><a href="#" onclick="switchPage('流动党员')">流动党员</a></li>
@@ -244,7 +260,10 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title"><span class="icon">❤️</span>帮扶台账<span class="arrow">▼</span></div>
+                <div class="menu-title">
+                    <span class="icon">❤️</span>帮扶台账
+                    <span class="arrow">▼</span>
+                </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('一般脱贫户')">一般脱贫户</a></li>
                     <li><a href="#" onclick="switchPage('不稳定户')">不稳定户</a></li>
@@ -252,7 +271,10 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title"><span class="icon">🤝</span>民政救助<span class="arrow">▼</span></div>
+                <div class="menu-title">
+                    <span class="icon">🤝</span>民政救助
+                    <span class="arrow">▼</span>
+                </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('低保户')">低保户</a></li>
                     <li><a href="#" onclick="switchPage('特困户')">特困户</a></li>
@@ -260,7 +282,10 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title"><span class="icon">🌾</span>土地台账<span class="arrow">▼</span></div>
+                <div class="menu-title">
+                    <span class="icon">🌾</span>土地台账
+                    <span class="arrow">▼</span>
+                </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('耕地信息')">耕地信息</a></li>
                     <li><a href="#" onclick="switchPage('宅基地')">宅基地</a></li>
@@ -271,7 +296,7 @@
     </div>
 
     <div class="top-bar">
-        <div class="sys-title">辛庄村管理系统</div>
+        <div class="sys-title" id="topBarTitle">辛庄村管理系统</div>
         <a href="#" class="back-index" onclick="switchPage('home')">返回首页</a>
     </div>
 
@@ -300,7 +325,7 @@
                         <button class="btn btn-success" onclick="openAddModal()">新增</button>
                         <button class="btn btn-info" onclick="openEdit()">编辑</button>
                         <button class="btn btn-primary" onclick="saveChanges()">保存</button>
-                        <button class="btn btn-danger btn-sm" onclick="clearAllData()">清空全部</button>
+                        <button class="btn btn-danger btn-sm" onclick="clearCurrentData()">清空当前分类</button>
                     </div>
                 </div>
                 <div id="listTableBox" style="padding:0 22px 22px">
@@ -335,9 +360,9 @@
         let totalData = JSON.parse(localStorage.getItem("villageTotalData") || "[]");
         let categoryKey = "分类名称";
         let currentCategory = "";
-        let isEditMode = false; // 核心修改：默认关闭编辑模式，表格只读
+        let isEditMode = false;
 
-        // 子菜单表头配置（完全匹配Excel模板）
+        // 子菜单表头配置
         const tableHeaders = {
             '外出务工': ['分类名称', '姓名', '身份证号', '联系电话', '家庭住址', '务工地点', '务工单位', '从事行业', '月收入', '外出时间', '返乡时间', '紧急联系人', '备注'],
             '本地务工': ['分类名称', '姓名', '身份证号', '联系电话', '家庭住址', '务工单位', '从事岗位', '月收入', '入职时间', '社保缴纳情况', '备注'],
@@ -363,32 +388,45 @@
             '土地流转': ['分类名称', '流转编号', '地块名称', '位置', '面积(亩)', '转出方', '转入方', '流转类型', '流转期限', '流转价格(元/年)', '合同编号', '备注']
         };
 
+        // 标准化分类名称工具函数
+        function standardizeCategoryName(name) {
+            if (!name) return '';
+            return String(name)
+                .trim()
+                .replace(/\s+/g, '')
+                .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
+                .toLowerCase();
+        }
+
         // 切换页面
         function switchPage(type) {
             document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-            currentCategory = type;
-            isEditMode = false; // 切换页面默认关闭编辑，表格只读
             if (type === "home") {
                 document.getElementById("homePage").classList.add("active");
-                document.querySelector(".sys-title").innerText = "辛庄村管理系统";
+                document.getElementById("topBarTitle").textContent = "辛庄村管理系统";
+                document.querySelectorAll(".menu-item").forEach(m => m.classList.remove("open"));
             } else {
+                currentCategory = type;
+                isEditMode = false;
                 document.getElementById("listPage").classList.add("active");
-                document.getElementById("listTitle").innerText = type + " 台账数据";
-                document.querySelector(".sys-title").innerText = "辛庄村管理系统 — " + type;
+                document.getElementById("listTitle").textContent = `${type} 台账数据`;
+                document.getElementById("topBarTitle").textContent = `辛庄村管理系统 — ${type}`;
                 renderEditableTable(getFilterData());
             }
         }
 
-        // 获取当前分类筛选后的数据
+        // 获取当前分类数据
         function getFilterData() {
+            if (!currentCategory) return [];
+            const targetStandard = standardizeCategoryName(currentCategory);
             return totalData.filter(item => {
-                const itemCategory = String(item[categoryKey] || "").trim().replace(/\s+/g, "").toLowerCase();
-                const targetCategory = String(currentCategory).trim().replace(/\s+/g, "").toLowerCase();
-                return itemCategory === targetCategory;
+                const itemCategory = String(item[categoryKey] || "");
+                const itemStandard = standardizeCategoryName(itemCategory);
+                return itemStandard === targetStandard;
             });
         }
 
-        // 渲染表格（核心优化：根据编辑模式控制输入框是否禁用）
+        // 渲染表格
         function renderEditableTable(data) {
             const box = document.getElementById("listTableBox");
             if (!currentCategory || !tableHeaders[currentCategory]) {
@@ -397,38 +435,24 @@
             }
             const headers = tableHeaders[currentCategory];
             if (!data || data.length === 0) {
-                box.innerHTML = '<div class="empty-state"><i>📄</i><p>当前分类暂无数据，请点击「新增」添加</p></div>';
+                box.innerHTML = '<div class="empty-state"><i>📄</i><p>当前分类暂无数据，请点击「新增」添加或导入Excel</p></div>';
                 return;
             }
-            // 表格包裹层，支持横向滚动
             let html = '<div class="table-wrap"><table class="data-table"><thead><tr>';
-            headers.forEach(h => html += '<th>' + h + '</th>');
+            headers.forEach(h => html += `<th>${h}</th>`);
             html += '<th>操作</th></tr></thead><tbody>';
             data.forEach((row, i) => {
-                html += '<tr data-row-idx="' + i + '">';
+                html += `<tr data-row-idx="${i}">`;
                 headers.forEach(field => {
                     const val = row[field] || '';
-                    // 核心：非编辑模式下，输入框禁用，只读
                     const disabled = isEditMode ? '' : 'disabled';
                     html += `<td><input class="editable" type="text" value="${val}" data-field="${field}" ${disabled}></td>`;
                 });
-                // 操作列：仅编辑模式下显示删除按钮
                 const deleteBtn = isEditMode ? `<button class="btn btn-danger btn-sm" onclick="deleteRow(${i})">删除</button>` : '';
                 html += `<td>${deleteBtn}</td></tr>`;
             });
             html += '</tbody></table></div>';
             box.innerHTML = html;
-
-            // 绑定回车新增事件（仅编辑模式下生效）
-            const inputs = box.querySelectorAll(".editable");
-            inputs.forEach(inp => {
-                inp.onkeydown = e => {
-                    if (e.key === "Enter" && isEditMode) {
-                        e.preventDefault();
-                        openAddModal();
-                    }
-                };
-            });
         }
 
         // 开启编辑模式
@@ -436,15 +460,72 @@
             if (!currentCategory) return;
             isEditMode = true;
             renderEditableTable(getFilterData());
-            alert("✅ 已开启编辑模式，可修改/删除数据");
+            alert("✅ 已开启编辑模式，可修改/删除数据，修改后请点击「保存」");
+        }
+
+        // 保存数据
+        function saveChanges() {
+            if (!isEditMode) {
+                alert("⚠️ 请先点击「编辑」按钮开启编辑模式");
+                return;
+            }
+            const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
+            const headers = tableHeaders[currentCategory];
+            const filterData = getFilterData();
+            rows.forEach((rowEl, idx) => {
+                const inputs = rowEl.querySelectorAll(".editable");
+                headers.forEach((field, i) => {
+                    filterData[idx][field] = inputs[i].value;
+                });
+            });
+            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
+            isEditMode = false;
+            renderEditableTable(filterData);
+            alert("✅ 数据保存成功，已退出编辑模式");
+        }
+
+        // 删除行
+        function deleteRow(index) {
+            if (!confirm("确定删除本条数据？此操作不可恢复")) return;
+            const filterData = getFilterData();
+            const targetStandard = standardizeCategoryName(currentCategory);
+            const globalIndex = totalData.findIndex(item => 
+                standardizeCategoryName(item[categoryKey]) === targetStandard && 
+                item === filterData[index]
+            );
+            if (globalIndex !== -1) {
+                totalData.splice(globalIndex, 1);
+                localStorage.setItem("villageTotalData", JSON.stringify(totalData));
+                renderEditableTable(getFilterData());
+            }
+        }
+
+        // 清空当前分类数据
+        function clearCurrentData() {
+            if (!confirm(`确定清空【${currentCategory}】所有数据？此操作不可恢复`)) return;
+            const targetStandard = standardizeCategoryName(currentCategory);
+            totalData = totalData.filter(item => 
+                standardizeCategoryName(item[categoryKey]) !== targetStandard
+            );
+            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
+            renderEditableTable(getFilterData());
+            alert("✅ 当前分类数据已清空");
+        }
+
+        // 清空全部数据
+        function clearAllData() {
+            if (!confirm("确定清空系统所有台账数据？此操作不可恢复")) return;
+            totalData = [];
+            localStorage.removeItem("villageTotalData");
+            if (currentCategory) renderEditableTable([]);
+            alert("✅ 所有数据已清空");
         }
 
         // 打开新增模态框
         function openAddModal() {
             if (!currentCategory || !tableHeaders[currentCategory]) return;
             const headers = tableHeaders[currentCategory];
-            document.getElementById("modalTitle").innerText = "新增" + currentCategory + "数据";
-            // 动态生成表单
+            document.getElementById("modalTitle").textContent = `新增${currentCategory}数据`;
             let formHtml = '';
             headers.forEach(field => {
                 const isReadOnly = field === categoryKey;
@@ -457,7 +538,6 @@
                 `;
             });
             document.getElementById("modalBody").innerHTML = formHtml;
-            // 显示模态框
             document.getElementById("addModal").classList.add("active");
         }
 
@@ -471,56 +551,22 @@
             if (!currentCategory || !tableHeaders[currentCategory]) return;
             const headers = tableHeaders[currentCategory];
             const newItem = {};
-            // 收集表单数据
             document.querySelectorAll("#modalBody .form-input").forEach(input => {
-                const field = input.dataset.field;
-                newItem[field] = input.value;
+                newItem[input.dataset.field] = input.value;
             });
-            // 新增到全局数据
             totalData.push(newItem);
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-            // 关闭模态框，重新渲染表格（默认只读）
             closeAddModal();
-            isEditMode = false;
             renderEditableTable(getFilterData());
-            alert("✅ 数据新增成功！");
+            alert("✅ 数据新增成功");
         }
 
-        // 删除单行数据
-        function deleteRow(index) {
-            if (!confirm("确定删除本条数据？此操作不可恢复")) return;
-            const list = getFilterData();
-            const idx = totalData.indexOf(list[index]);
-            if (idx > -1) {
-                totalData.splice(idx, 1);
-                localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                renderEditableTable(getFilterData());
-            }
-        }
+        // 点击模态框外部关闭
+        document.getElementById("addModal").addEventListener("click", function(e) {
+            if (e.target === this) closeAddModal();
+        });
 
-        // 保存数据
-        function saveChanges() {
-            if (!isEditMode) {
-                alert("⚠️ 请先点击「编辑」按钮开启编辑模式");
-                return;
-            }
-            const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
-            const list = getFilterData();
-            rows.forEach((row, i) => {
-                const real = totalData.indexOf(list[i]);
-                if (real === -1) return;
-                row.querySelectorAll(".editable").forEach(inp => {
-                    totalData[real][inp.dataset.field] = inp.value;
-                });
-            });
-            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-            // 保存后关闭编辑模式，表格重新只读
-            isEditMode = false;
-            renderEditableTable(getFilterData());
-            alert("✅ 数据保存成功，已退出编辑模式");
-        }
-
-        // Excel导入功能
+        // Excel导入（支持所有工作表）
         document.getElementById("excelFile").addEventListener("change", e => {
             const file = e.target.files[0];
             if (!file) return;
@@ -528,13 +574,28 @@
             reader.onload = ev => {
                 try {
                     const wb = XLSX.read(ev.target.result, { type: "array" });
-                    const sheet = wb.SheetNames[0];
-                    const arr = XLSX.utils.sheet_to_json(wb.Sheets[sheet]);
-                    if (arr.length === 0) { alert("表格为空，无数据可导入"); return; }
-                    totalData = totalData.concat(arr);
+                    let allImportData = [];
+                    wb.SheetNames.forEach(sheetName => {
+                        const sheet = wb.Sheets[sheetName];
+                        const headers = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0] || [];
+                        const arr = XLSX.utils.sheet_to_json(sheet);
+                        if (arr.length > 0) {
+                            // 自动识别分类列
+                            categoryKey = headers.find(h => 
+                                standardizeCategoryName(h) === standardizeCategoryName("分类名称")
+                            ) || headers[0];
+                            allImportData = allImportData.concat(arr);
+                        }
+                    });
+                    if (allImportData.length === 0) {
+                        alert("Excel中无有效数据可导入");
+                        return;
+                    }
+                    // 合并到全局数据
+                    totalData = totalData.concat(allImportData);
                     localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                    alert("✅ 导入成功，共导入 " + arr.length + " 条数据");
-                    switchPage(currentCategory);
+                    alert(`✅ 导入成功！\n共导入 ${allImportData.length} 条数据`);
+                    if (currentCategory) renderEditableTable(getFilterData());
                 } catch (err) {
                     alert("导入失败，请检查表格格式是否正确");
                     console.error(err);
@@ -544,32 +605,20 @@
             reader.readAsArrayBuffer(file);
         });
 
-        // 清空全部数据
-        function clearAllData() {
-            if (!confirm("确定清空所有台账数据？此操作不可恢复！")) return;
-            totalData = [];
-            localStorage.removeItem("villageTotalData");
-            switchPage(currentCategory);
-            alert("✅ 所有数据已清空");
-        }
-
         // 菜单展开/收起
-        document.querySelectorAll(".menu-title").forEach(item => {
-            item.addEventListener("click", function () {
-                const parent = this.closest(".menu-item");
-                const arrow = this.querySelector(".arrow");
-                if (arrow) parent.classList.toggle("open");
+        document.querySelectorAll(".menu-item > .menu-title").forEach(title => {
+            title.addEventListener("click", function(e) {
+                if (this.parentElement.querySelector(".submenu")) {
+                    e.preventDefault();
+                    this.parentElement.classList.toggle("open");
+                }
             });
         });
 
-        // 点击模态框遮罩关闭
-        document.getElementById("addModal").addEventListener("click", function(e) {
-            if (e.target === this) closeAddModal();
-        });
-
-        // 页面初始化
-        window.onload = function () {
-            switchPage("home");
+        // 初始化
+        window.onload = function() {
+            // 菜单默认展开务工信息
+            document.querySelector(".menu-item").classList.add("open");
         };
     </script>
 </body>
