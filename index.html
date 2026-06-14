@@ -7,6 +7,24 @@
     <style>
         * {margin: 0;padding: 0;box-sizing: border-box;}
         body {font-family: "Microsoft Yahei", sans-serif;background: #f4f6f8;display: flex;}
+        /* 登录弹窗 */
+        .login-modal {
+            position: fixed;top: 0;left: 0;right: 0;bottom: 0;
+            background: rgba(0,0,0,0.7);display: flex;align-items: center;justify-content: center;z-index: 9999;
+        }
+        .login-box {
+            background: #fff;padding: 30px;border-radius: 8px;box-shadow: 0 5px 20px rgba(0,0,0.2);width: 300px;
+        }
+        .login-title {font-size: 20px;color: #0c5460;text-align: center;margin-bottom: 20px;}
+        .login-input {
+            width: 100%;padding: 10px;border: 1px solid #dee2e6;border-radius: 4px;margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .login-btn {
+            width: 100%;padding: 10px;background: #0c5460;color: #fff;border: none;border-radius: 4px;
+            cursor: pointer;font-size: 14px;
+        }
+        .login-error {color: #dc3545;font-size: 13px;text-align: center;margin-top: 10px;display: none;}
         /* 顶部导航栏 */
         .top-bar {
             position: fixed;top: 0;left: 220px;right: 0;height: 50px;
@@ -75,11 +93,11 @@
         .btn-info:hover {background: #138496;}
         .btn-primary {background: #fd7e14;color: #fff;}
         .btn-primary:hover {background: #e67312;}
-        .btn-danger {background: #dc3545;color: #fff;}
+        .btn-danger {background: #dc3445;color: #fff;}
         .btn-danger:hover {background: #c82333;}
         .btn-sm {padding: 5px 10px;font-size: 12px;}
         .action-bar {display: flex;gap: 10px;align-items: center;flex-wrap: wrap;}
-        /* 表格核心优化样式 */
+        /* 表格样式 */
         .table-wrap {
             width: 100%;overflow-x: auto;position: relative;
             border-radius: 6px;border: 1px solid #e9ecef;
@@ -88,10 +106,7 @@
             width: 100%;border-collapse: separate;border-spacing: 0;
             table-layout: fixed;
         }
-        /* 固定表头 */
-        .data-table thead {
-            position: sticky;top: 0;z-index: 5;
-        }
+        .data-table thead {position: sticky;top: 0;z-index: 5;}
         .data-table th {
             padding: 14px 12px;text-align: center;font-size: 13px;
             background-color: #0a4c55;color: #fff;font-weight: 600;
@@ -99,55 +114,41 @@
             white-space: nowrap;overflow: hidden;text-overflow: ellipsis;
         }
         .data-table th:last-child {border-right: none;}
-        /* 数据行斑马纹 */
-        .data-table tbody tr:nth-child(odd) td {
-            background-color: #fff;
-        }
-        .data-table tbody tr:nth-child(even) td {
-            background-color: #f8f9fa;
-        }
-        .data-table tbody tr:hover td {
-            background-color: #e3f2fd;transition: background 0.2s;
-        }
+        .data-table tbody tr:nth-child(odd) td {background-color: #fff;}
+        .data-table tbody tr:nth-child(even) td {background-color: #f8f9fa;}
+        .data-table tbody tr:hover td {background-color: #e3f2fd;transition: background 0.2s;}
         .data-table td {
             padding: 12px 10px;text-align: center;font-size: 13px;
             border-right: 1px solid #e9ecef;border-bottom: 1px solid #e9ecef;
-            vertical-align: middle;
-            white-space: nowrap;overflow: hidden;text-overflow: ellipsis;
+            vertical-align: middle;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;
         }
         .data-table td:last-child {border-right: none;}
         .data-table tr:last-child td {border-bottom: none;}
-        /* 固定操作列 */
         .data-table th:last-child,
         .data-table td:last-child {
-            position: sticky;right: 0;z-index: 4;
-            background-color: inherit;
+            position: sticky;right: 0;z-index: 4;background-color: inherit;
         }
         .data-table th:last-child {background-color: #0a4c55;}
-        /* 输入框样式优化 */
         .editable {
             background: #fff;border: 1px solid #dee2e6;padding: 6px 8px;width: 100%;
-            border-radius: 4px;font-size: 13px;transition: all 0.2s;
-            text-align: center;
+            border-radius: 4px;font-size: 13px;text-align: center;
         }
         .editable:focus {
             outline: none;border: 1px solid #409eff;
             box-shadow: 0 0 0 2px rgba(64,158,255,0.2);
         }
         .editable:disabled {
-            background: transparent;border-color: transparent;cursor: default;
-            color: #333;
+            background: transparent;border-color: transparent;cursor: default;color: #333;
         }
         .empty-state {
             text-align: center;padding: 80px 20px;color: #999;font-size: 14px;
             display: flex;flex-direction: column;align-items: center;gap: 10px;
         }
         .empty-state i {font-size: 40px;opacity: 0.5;}
-        /* 新增数据模态框样式 */
+        /* 弹窗 */
         .modal-mask {
             position: fixed;top: 0;left: 0;right: 0;bottom: 0;
-            background: rgba(0,0,0,0.5);z-index: 999;
-            display: none;align-items: center;justify-content: center;
+            background: rgba(0,0,0,0.5);display: none;align-items: center;justify-content: center;z-index: 999;
         }
         .modal-mask.active {display: flex;}
         .modal-box {
@@ -160,19 +161,17 @@
         }
         .modal-title {font-size: 16px;color: #333;font-weight: 500;}
         .modal-close {
-            background: none;border: none;font-size: 20px;color: #999;
-            cursor: pointer;transition: color 0.2s;
+            background: none;border: none;font-size: 20px;color: #999;cursor: pointer;
         }
         .modal-close:hover {color: #333;}
         .modal-body {padding: 20px 22px;}
         .form-item {margin-bottom: 16px;}
         .form-label {
-            display: block;margin-bottom: 6px;font-size: 13px;color: #333;
-            font-weight: 500;
+            display: block;margin-bottom: 6px;font-size: 13px;color: #333;font-weight: 500;
         }
         .form-input {
             width: 100%;padding: 8px 12px;border: 1px solid #dee2e6;
-            border-radius: 4px;font-size: 13px;transition: all 0.2s;
+            border-radius: 4px;font-size: 13px;
         }
         .form-input:focus {
             outline: none;border: 1px solid #409eff;
@@ -187,7 +186,7 @@
         }
         .page {display: none;}
         .page.active {display: block;}
-        /* 首页样式 */
+        /* 首页 */
         .home-wrap {
             width: 100%;min-height: calc(100vh - 50px - 50px);
             background: linear-gradient(135deg, #edf6f9 0%, #e8f4f8 100%);
@@ -203,6 +202,16 @@
     </style>
 </head>
 <body>
+    <!-- 登录弹窗 -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-box">
+            <h3 class="login-title">系统登录</h3>
+            <input type="password" class="login-input" id="pwdInput" placeholder="请输入登录密码">
+            <button class="login-btn" onclick="checkPwd()">登录</button>
+            <div class="login-error" id="loginTip">密码错误，请重新输入</div>
+        </div>
+    </div>
+
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>辛庄村管理系统</h2>
@@ -301,7 +310,6 @@
     </div>
 
     <div class="main-content">
-        <!-- 首页 -->
         <div id="homePage" class="page active">
             <div class="home-wrap">
                 <h1 class="home-main-title">辛庄村管理系统</h1>
@@ -316,7 +324,6 @@
             </div>
         </div>
 
-        <!-- 台账列表页 -->
         <div id="listPage" class="page">
             <div class="card">
                 <div class="card-header">
@@ -338,16 +345,13 @@
         </div>
     </div>
 
-    <!-- 新增数据模态框 -->
     <div class="modal-mask" id="addModal">
         <div class="modal-box">
             <div class="modal-header">
                 <h4 class="modal-title" id="modalTitle">新增数据</h4>
                 <button class="modal-close" onclick="closeAddModal()">×</button>
             </div>
-            <div class="modal-body" id="modalBody">
-                <!-- 动态生成表单内容 -->
-            </div>
+            <div class="modal-body" id="modalBody"></div>
             <div class="modal-footer">
                 <button class="btn btn-danger" onclick="closeAddModal()">取消</button>
                 <button class="btn btn-success" onclick="confirmAddData()">确定新增</button>
@@ -356,13 +360,21 @@
     </div>
 
     <script>
-        // 全局数据
-        let totalData = JSON.parse(localStorage.getItem("villageTotalData") || "[]");
+        // ========== 登录密码 ==========
+        const PASSWORD = "admin123"; 
+
+        // ========== 全局共享数据（在这里粘贴你Excel导出的JSON数据） ==========
+        // 1.你导入Excel后，数据会存在下面这个数组里，所有人打开网页都会加载
+        // 2.更新数据后，重新粘贴新数组到此处，再上传GitHub即可全员同步
+        let totalData = [
+            // 在这里替换成你的真实数据
+        ];
+
         let categoryKey = "分类名称";
         let currentCategory = "";
         let isEditMode = false;
 
-        // 子菜单表头配置
+        // 表头配置
         const tableHeaders = {
             '外出务工': ['分类名称', '姓名', '身份证号', '联系电话', '家庭住址', '务工地点', '务工单位', '从事行业', '月收入', '外出时间', '返乡时间', '紧急联系人', '备注'],
             '本地务工': ['分类名称', '姓名', '身份证号', '联系电话', '家庭住址', '务工单位', '从事岗位', '月收入', '入职时间', '社保缴纳情况', '备注'],
@@ -372,7 +384,7 @@
             '空挂户籍': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '户籍地址', '实际居住地址', '空挂原因', '登记时间', '备注'],
             '重点人员': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '重点类型', '管控等级', '登记时间', '责任人', '备注'],
             '视力听力残疾': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '残疾类型', '残疾等级', '发证时间', '监护人', '备注'],
-            '肢体智力残疾': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '残疾类型', '残疾等级', '发证时间', '监护人', '备注'],
+            '肢体智力残疾': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '残疾类型', '残疾等级', '发证时间', '监护人', '生活自理能力', '备注'],
             '持证残疾台账': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '残疾类型', '残疾等级', '证书编号', '发证机构', '有效期', '备注'],
             '在职党员': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '入党时间', '转正时间', '党内职务', '所在支部', '备注'],
             '流动党员': ['分类名称', '姓名', '身份证号', '性别', '年龄', '联系电话', '家庭住址', '入党时间', '流出时间', '流入地', '流动原因', '备注'],
@@ -388,14 +400,20 @@
             '土地流转': ['分类名称', '流转编号', '地块名称', '位置', '面积(亩)', '转出方', '转入方', '流转类型', '流转期限', '流转价格(元/年)', '合同编号', '备注']
         };
 
-        // 标准化分类名称工具函数
+        // 标准化分类
         function standardizeCategoryName(name) {
             if (!name) return '';
-            return String(name)
-                .trim()
-                .replace(/\s+/g, '')
-                .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
-                .toLowerCase();
+            return String(name).trim().replace(/\s+/g, '').replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0)).toLowerCase();
+        }
+
+        // 密码验证
+        function checkPwd() {
+            const val = document.getElementById('pwdInput').value.trim();
+            if(val === PASSWORD){
+                document.getElementById('loginModal').style.display = 'none';
+            }else{
+                document.getElementById('loginTip').style.display = 'block';
+            }
         }
 
         // 切换页面
@@ -415,7 +433,7 @@
             }
         }
 
-        // 获取当前分类数据（过滤掉只有分类名称的空白行）
+        // 筛选数据（过滤空白行）
         function getFilterData() {
             if (!currentCategory) return [];
             const targetStandard = standardizeCategoryName(currentCategory);
@@ -423,7 +441,6 @@
             return totalData.filter(item => {
                 const itemCategory = String(item[categoryKey] || "");
                 const itemStandard = standardizeCategoryName(itemCategory);
-                // 过滤条件：分类名称匹配，且除了分类名称外，至少还有一个字段有值
                 const hasValidData = headers.some(h => h !== categoryKey && item[h] && String(item[h]).trim() !== '');
                 return itemStandard === targetStandard && hasValidData;
             });
@@ -458,18 +475,16 @@
             box.innerHTML = html;
         }
 
-        // 开启编辑模式
         function openEdit() {
             if (!currentCategory) return;
             isEditMode = true;
             renderEditableTable(getFilterData());
-            alert("✅ 已开启编辑模式，可修改/删除数据，修改后请点击「保存」");
+            alert("✅ 已开启编辑模式");
         }
 
-        // 保存数据
         function saveChanges() {
             if (!isEditMode) {
-                alert("⚠️ 请先点击「编辑」按钮开启编辑模式");
+                alert("⚠️ 请先点击「编辑」");
                 return;
             }
             const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
@@ -481,50 +496,37 @@
                     filterData[idx][field] = inputs[i].value;
                 });
             });
-            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
+            alert("✅ 数据保存成功（仅本地生效，如需全员同步，请更新代码内totalData数组）");
             isEditMode = false;
             renderEditableTable(filterData);
-            alert("✅ 数据保存成功，已退出编辑模式");
         }
 
-        // 删除行
         function deleteRow(index) {
-            if (!confirm("确定删除本条数据？此操作不可恢复")) return;
+            if (!confirm("确定删除？")) return;
             const filterData = getFilterData();
             const targetStandard = standardizeCategoryName(currentCategory);
-            const globalIndex = totalData.findIndex(item => 
-                standardizeCategoryName(item[categoryKey]) === targetStandard && 
-                item === filterData[index]
-            );
+            const globalIndex = totalData.findIndex(item => standardizeCategoryName(item[categoryKey]) === targetStandard && item === filterData[index]);
             if (globalIndex !== -1) {
                 totalData.splice(globalIndex, 1);
-                localStorage.setItem("villageTotalData", JSON.stringify(totalData));
                 renderEditableTable(getFilterData());
             }
         }
 
-        // 清空当前分类数据
         function clearCurrentData() {
-            if (!confirm(`确定清空【${currentCategory}】所有数据？此操作不可恢复`)) return;
+            if (!confirm("确定清空当前分类？")) return;
             const targetStandard = standardizeCategoryName(currentCategory);
-            totalData = totalData.filter(item => 
-                standardizeCategoryName(item[categoryKey]) !== targetStandard
-            );
-            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
+            totalData = totalData.filter(item => standardizeCategoryName(item[categoryKey]) !== targetStandard);
             renderEditableTable(getFilterData());
-            alert("✅ 当前分类数据已清空");
+            alert("✅ 已清空");
         }
 
-        // 清空全部数据
         function clearAllData() {
-            if (!confirm("确定清空系统所有台账数据？此操作不可恢复")) return;
+            if (!confirm("确定清空全部数据？")) return;
             totalData = [];
-            localStorage.removeItem("villageTotalData");
             if (currentCategory) renderEditableTable([]);
-            alert("✅ 所有数据已清空");
+            alert("✅ 已清空");
         }
 
-        // 打开新增模态框
         function openAddModal() {
             if (!currentCategory || !tableHeaders[currentCategory]) return;
             const headers = tableHeaders[currentCategory];
@@ -544,12 +546,10 @@
             document.getElementById("addModal").classList.add("active");
         }
 
-        // 关闭新增模态框
         function closeAddModal() {
             document.getElementById("addModal").classList.remove("active");
         }
 
-        // 确认新增数据
         function confirmAddData() {
             if (!currentCategory || !tableHeaders[currentCategory]) return;
             const headers = tableHeaders[currentCategory];
@@ -558,18 +558,16 @@
                 newItem[input.dataset.field] = input.value;
             });
             totalData.push(newItem);
-            localStorage.setItem("villageTotalData", JSON.stringify(totalData));
             closeAddModal();
             renderEditableTable(getFilterData());
-            alert("✅ 数据新增成功");
+            alert("✅ 新增成功（仅本地生效，如需全员同步，请更新代码内totalData数组）");
         }
 
-        // 点击模态框外部关闭
         document.getElementById("addModal").addEventListener("click", function(e) {
             if (e.target === this) closeAddModal();
         });
 
-        // Excel导入（支持所有工作表）
+        // Excel导入（导入后同步到全局数组）
         document.getElementById("excelFile").addEventListener("change", e => {
             const file = e.target.files[0];
             if (!file) return;
@@ -583,44 +581,36 @@
                         const headers = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0] || [];
                         const arr = XLSX.utils.sheet_to_json(sheet);
                         if (arr.length > 0) {
-                            // 自动识别分类列
-                            categoryKey = headers.find(h => 
-                                standardizeCategoryName(h) === standardizeCategoryName("分类名称")
-                            ) || headers[0];
+                            categoryKey = headers.find(h => standardizeCategoryName(h) === standardizeCategoryName("分类名称")) || headers[0];
                             allImportData = allImportData.concat(arr);
                         }
                     });
                     if (allImportData.length === 0) {
-                        alert("Excel中无有效数据可导入");
+                        alert("Excel无数据");
                         return;
                     }
-                    // 合并到全局数据
                     totalData = totalData.concat(allImportData);
-                    localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                    alert(`✅ 导入成功！\n共导入 ${allImportData.length} 条数据`);
+                    alert(`✅ 导入成功！共 ${allImportData.length} 条数据\n【重要】请把代码里 totalData 数组替换为新数据，再上传GitHub，别人才能看到`);
                     if (currentCategory) renderEditableTable(getFilterData());
                 } catch (err) {
-                    alert("导入失败，请检查表格格式是否正确");
-                    console.error(err);
+                    alert("导入失败");
                 }
                 e.target.value = "";
             };
             reader.readAsArrayBuffer(file);
         });
 
-        // 菜单展开/收起
+        // 菜单展开
         document.querySelectorAll(".menu-item > .menu-title").forEach(title => {
-            title.addEventListener("click", function(e) {
-                if (this.parentElement.querySelector(".submenu")) {
+            if (title.parentElement.querySelector(".submenu")) {
+                title.addEventListener("click", function(e) {
                     e.preventDefault();
                     this.parentElement.classList.toggle("open");
-                }
-            });
+                });
+            }
         });
 
-        // 初始化
         window.onload = function() {
-            // 菜单默认展开务工信息
             document.querySelector(".menu-item").classList.add("open");
         };
     </script>
