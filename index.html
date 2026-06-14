@@ -12,6 +12,7 @@
             background-color: #fff350 !important;
             padding: 2px 4px;
             border-radius: 2px;
+            display: inline-block;
         }
         /* 登录弹窗 */
         .login-modal {
@@ -344,7 +345,7 @@
                     <h3 class="card-title" id="listTitle">分类数据</h3>
                     <div class="action-bar">
                         <!-- 人名搜索区域 -->
-                        <input type="text" class="search-input" id="nameSearchVal" placeholder="输入人名搜索">
+                        <input type="text" class="search-input" id="nameSearchVal" placeholder="输入人名搜索" onkeyup="if(event.key==='Enter') searchByName()">
                         <button class="btn btn-info" onclick="searchByName()">姓名搜索</button>
                         <button class="btn btn-sm btn-primary" onclick="resetSearch()">重置</button>
                         <!-- 原有按钮 -->
@@ -475,7 +476,7 @@
             });
         }
 
-        // ===== 人名搜索 + 高亮功能 =====
+        // ===== 人名搜索 + 高亮功能（修复版） =====
         function searchByName() {
             let keyword = document.getElementById("nameSearchVal").value.trim();
             currentSearchKey = keyword;
@@ -505,7 +506,7 @@
             renderEditableTable(originFilterData);
         }
 
-        // 渲染表格 + 关键词高亮
+        // 渲染表格 + 关键词高亮（修复版：不修改input的value，改用样式高亮）
         function renderEditableTable(data) {
             const box = document.getElementById("listTableBox");
             if (!currentCategory || !tableHeaders[currentCategory]) {
@@ -521,26 +522,30 @@
             headers.forEach(h => html += `<th>${h}</th>`);
             html += '<th>操作</th></tr></thead><tbody>';
             
-            // 遍历数据，处理姓名高亮
+            // 遍历数据，生成表格
             data.forEach((row, i) => {
                 html += `<tr data-row-idx="${i}">`;
                 headers.forEach(field => {
-                    let val = row[field] || '';
-                    // 姓名列 + 有搜索关键词 → 增加高亮
-                    if(field === '姓名' && currentSearchKey){
-                        val = val.replace(
-                            new RegExp(currentSearchKey, 'g'),
-                            `<span class="name-highlight">${currentSearchKey}</span>`
-                        );
-                    }
+                    const val = row[field] || '';
                     const disabled = isEditMode ? '' : 'disabled';
-                    html += `<td><input class="editable" type="text" value="${val}" data-field="${field}" ${disabled}></td>`;
+                    html += `<td data-field="${field}"><input class="editable" type="text" value="${val}" data-row="${i}" ${disabled}></td>`;
                 });
                 const deleteBtn = isEditMode ? `<button class="btn btn-danger btn-sm" onclick="deleteRow(${i})">删除</button>` : '';
                 html += `<td>${deleteBtn}</td></tr>`;
             });
             html += '</tbody></table></div>';
             box.innerHTML = html;
+
+            // 渲染完成后，给匹配的姓名单元格添加高亮样式
+            if (currentSearchKey && !isEditMode) {
+                document.querySelectorAll(`td[data-field="姓名"] input`).forEach(input => {
+                    if (input.value.includes(currentSearchKey)) {
+                        input.classList.add("name-highlight");
+                    } else {
+                        input.classList.remove("name-highlight");
+                    }
+                });
+            }
         }
 
         // 开启编辑
