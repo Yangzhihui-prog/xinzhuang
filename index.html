@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>焦店镇辛庄村-村级管理平台</title>
-    <!-- Excel解析库 -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- 样式部分（保留你原来的样式，未修改） -->
     <style>
         * {margin: 0;padding: 0;box-sizing: border-box;}
         body {font-family: "Microsoft Yahei",sans-serif;background: #f4f6f8;display: flex;}
@@ -92,28 +90,24 @@
         </div>
     </div>
 
-    <!-- 核心修复：Supabase初始化 + 数据处理逻辑 -->
     <script type="module">
-        // ============ 替换为你自己的Supabase密钥 ============
         const SUPABASE_URL = "https://ihkgdxthshfzsdtbwje.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_HGvaSBNMy189hWZKW8XDzA_CciDVbse";
-        const TABLE_NAME = "你的表名"; // 【重要】替换成你实际的表名，比如"village_data"
-        // ==================================================
+        const TABLE_NAME = "village_data";
 
-        // 初始化Supabase客户端
         import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: { persistSession: false },
+            global: { headers: { 'apikey': SUPABASE_ANON_KEY } }
+        });
         console.log("✅ Supabase 客户端初始化成功！", supabase);
 
-        // 全局变量，存储当前数据
         let currentData = [];
 
-        // 页面加载完成后自动执行
         window.onload = async function() {
             await loadAllCloudData();
         };
 
-        // 加载所有数据
         async function loadAllCloudData() {
             try {
                 const { data, error } = await supabase
@@ -121,7 +115,6 @@
                     .select('*');
 
                 if (error) throw error;
-                
                 currentData = data;
                 renderDataTable(data);
                 console.log("✅ 数据加载成功：", data);
@@ -131,7 +124,6 @@
             }
         }
 
-        // 渲染数据表格
         function renderDataTable(data) {
             const container = document.getElementById('data-container');
             if (!data || data.length === 0) {
@@ -143,8 +135,6 @@
                 `;
                 return;
             }
-
-            // 获取表头（取第一条数据的所有键）
             const headers = Object.keys(data[0]);
             let tableHTML = `
                 <table class="data-table">
@@ -155,8 +145,6 @@
                     </thead>
                     <tbody>
             `;
-
-            // 渲染每一行数据
             data.forEach(row => {
                 tableHTML += `<tr>`;
                 headers.forEach(h => {
@@ -164,16 +152,13 @@
                 });
                 tableHTML += `</tr>`;
             });
-
             tableHTML += `</tbody></table>`;
             container.innerHTML = tableHTML;
         }
 
-        // 处理Excel导入
         document.getElementById('file-input').addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = async function(e) {
                 try {
@@ -182,21 +167,16 @@
                     const sheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[sheetName];
                     const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
                     if (jsonData.length === 0) {
                         alert("Excel文件为空，请检查文件内容");
                         return;
                     }
-
-                    // 导入数据到Supabase
-                    const { data: insertedData, error } = await supabase
+                    const { error } = await supabase
                         .from(TABLE_NAME)
                         .insert(jsonData);
-
                     if (error) throw error;
-
                     alert(`✅ 成功导入 ${jsonData.length} 条数据！`);
-                    await loadAllCloudData(); // 刷新数据
+                    await loadAllCloudData();
                 } catch (err) {
                     console.error("❌ 导入Excel失败：", err);
                     alert("导入失败：" + err.message);
@@ -205,17 +185,13 @@
             reader.readAsArrayBuffer(file);
         });
 
-        // 清空全部数据
         async function clearAllData() {
             if (!confirm("确定要清空所有数据吗？此操作不可恢复！")) return;
-
             try {
                 const { error } = await supabase
                     .from(TABLE_NAME)
-                    .delete().neq('id', 0); // 假设你的表有id字段，如果没有，改成其他字段或直接用.delete()
-
+                    .delete().neq('id', 0);
                 if (error) throw error;
-
                 alert("✅ 数据已清空！");
                 await loadAllCloudData();
             } catch (err) {
@@ -224,9 +200,7 @@
             }
         }
 
-        // 页面切换函数
         function showPage(pageName) {
-            // 这里可以扩展其他页面的切换逻辑
             console.log("切换到页面：", pageName);
         }
     </script>
