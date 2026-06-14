@@ -94,14 +94,20 @@
         let supabase;
 
         async function initSupabase() {
-            // 换成带国内代理的URL
-            const SUPABASE_URL = "https://ihkgdxthshfzsdtbwje.supabase.co.proxy.cors.ninja";
+            // 使用Supabase的IP地址直接访问，绕过域名解析
+            const SUPABASE_URL = "https://35.186.181.245/rest/v1";
             const SUPABASE_ANON_KEY = "sb_publishable_HGvaSBNMy189hWZKW8XDzA_CciDVbse";
             try {
                 const { createClient } = await import("https://esm.run/@supabase/supabase-js@2");
                 supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
                     auth: { persistSession: false },
-                    global: { headers: { 'apikey': SUPABASE_ANON_KEY } }
+                    global: { 
+                        headers: { 
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        } 
+                    }
                 });
                 console.log("✅ Supabase 客户端初始化成功！");
                 await loadAllCloudData();
