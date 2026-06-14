@@ -7,223 +7,104 @@
     <style>
         * {margin: 0;padding: 0;box-sizing: border-box;}
         body {font-family: "Microsoft Yahei",sans-serif;background: #f4f6f8;display: flex;}
-        /* 顶部导航栏 */
         .top-bar {
-            position: fixed;
-            top: 0;
-            left: 220px;
-            right: 0;
-            height: 50px;
-            background: #0c5460;
-            display: flex;
-            align-items: center;
-            padding: 0 25px;
-            z-index: 100;
+            position: fixed;top: 0;left: 220px;right: 0;height: 50px;
+            background: #0c5460;display: flex;align-items: center;padding: 0 25px;z-index: 100;
         }
         .sys-title {color: #fff;font-size: 16px;}
         .back-index {
-            padding: 6px 16px;
-            background: #20c997;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 14px;
+            padding: 6px 16px;background: #20c997;color: #fff;
+            text-decoration: none;border-radius: 4px;font-size: 14px;
         }
-        /* 左侧侧边栏 */
         .sidebar {
-            width: 220px;
-            background: #0c5460;
-            color: #fff;
-            min-height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
+            width: 220px;background: #0c5460;color: #fff;
+            min-height: 100vh;position: fixed;top: 0;left: 0;
         }
         .sidebar-header {
-            padding: 20px 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            background: #0a4c55;
-            text-align: center;
+            padding: 20px 15px;border-bottom: 1px solid rgba(255,255,255,0.15);
+            background: #0a4c55;text-align: center;
         }
         .sidebar-header h2 {font-size: 18px;margin-bottom: 6px;}
         .sidebar-header p {font-size: 13px;opacity: 0.85;}
         .menu {list-style: none;}
         .menu-item {border-bottom: 1px solid rgba(255,255,255,0.05);}
         .menu-title {
-            display: flex;
-            align-items: center;
-            padding: 14px 18px;
-            color: #fff;
-            text-decoration: none;
-            cursor: pointer;
-            transition: background 0.25s;
-            font-size: 14px;
+            display: flex;align-items: center;padding: 14px 18px;color: #fff;
+            text-decoration: none;cursor: pointer;transition: background 0.25s;font-size: 14px;
         }
         .menu-title:hover {background: #083e45;}
         .icon {margin-right: 10px;font-size: 15px;}
         .arrow {margin-left: auto;transition: transform 0.3s ease;}
         .submenu {
-            list-style: none;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-            background: #09454d;
+            list-style: none;max-height: 0;overflow: hidden;
+            transition: max-height 0.3s ease;background: #09454d;
         }
         .submenu li a {
-            display: block;
-            padding: 11px 15px 11px 45px;
-            color: #ddd;
-            text-decoration: none;
-            font-size: 13px;
+            display: block;padding: 11px 15px 11px 45px;color: #ddd;
+            text-decoration: none;font-size: 13px;
         }
         .submenu li a:hover {background: #083e45;}
         .menu-item.open .arrow {transform: rotate(180deg);}
         .menu-item.open .submenu {max-height: 600px;}
-        /* 主内容区 */
         .main-content {
-            flex: 1;
-            margin-left: 220px;
-            margin-top: 50px;
-            padding: 25px;
+            flex: 1;margin-left: 220px;margin-top: 50px;padding: 25px;
         }
         .card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0,0,0.08);
-            margin-bottom: 20px;
-            overflow: hidden;
+            background: #fff;border-radius: 8px;box-shadow: 0 2px 12px rgba(0,0,0.08);
+            margin-bottom: 20px;overflow: hidden;
         }
         .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 22px;
-            border-bottom: 1px solid #eee;
+            display: flex;justify-content: space-between;align-items: center;
+            padding: 16px 22px;border-bottom: 1px solid #eee;
         }
         .card-title {font-size: 17px;color: #333;font-weight: 500;}
-        /* 按钮通用样式 */
         .btn {
-            padding: 7px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s ease;
+            padding: 7px 16px;border: none;border-radius: 6px;
+            cursor: pointer;font-size: 13px;transition: all 0.2s ease;
         }
-        .btn-primary {background: #fd7e14;color: #fff;}
-        .btn-primary:hover {background: #e67312;}
         .btn-success {background: #28a745;color: #fff;}
         .btn-success:hover {background: #218838;}
         .btn-info {background: #17a2b8;color: #fff;}
         .btn-info:hover {background: #138496;}
-        .btn-danger {
-            background: #c0392b;
-            color: #ffffff;
-            font-weight: 500;
-        }
+        .btn-primary {background: #fd7e14;color: #fff;}
+        .btn-primary:hover {background: #e67312;}
+        .btn-danger {background: #c0392b;color: #fff;}
         .btn-danger:hover {background: #a93226;}
         .btn-sm {padding: 5px 10px;font-size: 12px;}
-        .file-input {display: none;}
         .action-bar {display: flex;gap: 10px;align-items: center;}
-        /* 表格美化 */
         .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            overflow: hidden;
+            width: 100%;border-collapse: collapse;margin-top: 15px;
+            border: 1px solid #e9ecef;border-radius: 6px;overflow: hidden;
         }
         .data-table th {
-            padding: 13px 14px;
-            text-align: left;
-            font-size: 13px;
-            background-color: #0c5460;
-            color: #fff;
-            font-weight: 500;
+            padding: 13px 14px;text-align: left;font-size: 13px;
+            background-color: #0c5460;color: #fff;font-weight: 500;
         }
         .data-table td {
-            padding: 12px 14px;
-            text-align: left;
-            font-size: 13px;
-            border-bottom: 1px solid #e9ecef;
-            background: #fff;
+            padding: 12px 14px;text-align: left;font-size: 13px;
+            border-bottom: 1px solid #e9ecef;background: #fff;
         }
-        .data-table tr:hover td {
-            background-color: #f7f9fc;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-            font-size: 14px;
-        }
-        /* 输入框样式 */
+        .data-table tr:hover td {background-color: #f7f9fc;}
+        .empty-state {text-align: center;padding: 60px 20px;color: #999;font-size: 14px;}
         .editable {
-            background: #fff;
-            border: 1px solid #dee2e6;
-            padding: 6px 8px;
-            width: 100%;
-            border-radius: 4px;
-            font-size: 13px;
-            transition: border 0.2s;
+            background: #fff;border: 1px solid #dee2e6;padding: 6px 8px;width: 100%;
+            border-radius: 4px;font-size: 13px;
         }
-        .editable:focus {
-            outline: none;
-            border: 1px solid #409eff;
-            box-shadow: 0 0 0 2px rgba(64,158,255,0.2);
-        }
-        .editable:read-only {
-            background: #f8f9fa;
-            border-color: #e9ecef;
-            cursor: default;
-        }
+        .editable:read-only {background: #f8f9fa;border-color: #e9ecef;}
         .page {display: none;}
         .page.active {display: block;}
-
-        /* 首页样式 */
         .home-wrap {
-            width: 100%;
-            min-height: calc(100vh - 50px - 50px);
+            width: 100%;min-height: calc(100vh - 50px - 50px);
             background: linear-gradient(135deg, #edf6f9 0%, #e8f4f8 100%);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
+            border-radius: 8px;display: flex;flex-direction: column;
+            align-items: center;justify-content: center;padding: 40px 20px;
         }
-        .home-line {
-            width: 120px;
-            height: 3px;
-            background: #0c5460;
-            border-radius: 2px;
-            margin: 18px 0;
-        }
-        .home-main-title {
-            font-size: 46px;
-            color: #0c5460;
-            font-weight: bold;
-            letter-spacing: 6px;
-            text-align: center;
-        }
-        .home-sub-title {
-            font-size: 22px;
-            color: #2d6a78;
-            margin-bottom: 12px;
-        }
-        .home-desc {
-            font-size: 16px;
-            color: #555;
-            margin-top: 10px;
-            line-height: 1.8;
-            text-align: center;
-        }
-        .home-btn-group {
-            margin-top: 40px;
-            display: flex;
-            gap: 15px;
-        }
+        .home-main-title {font-size: 46px;color: #0c5460;font-weight: bold;letter-spacing: 6px;}
+        .home-line {width: 120px;height: 3px;background: #0c5460;border-radius: 2px;margin: 18px 0;}
+        .home-sub-title {font-size: 22px;color: #2d6a78;margin-bottom: 12px;}
+        .home-desc {font-size: 16px;color: #555;margin-top: 10px;line-height: 1.8;text-align: center;}
+        .home-btn-group {margin-top: 40px;display: flex;gap: 15px;}
+        .file-input {display: none;}
     </style>
 </head>
 <body>
@@ -233,18 +114,9 @@
             <p>焦店镇村级台账平台</p>
         </div>
         <ul class="menu">
+            <li class="menu-item"><div class="menu-title" onclick="switchPage('home')"><span class="icon">🏠</span>首页</div></li>
             <li class="menu-item">
-                <div class="menu-title" onclick="switchPage('home')">
-                    <span class="icon">🏠</span>
-                    <span>首页</span>
-                </div>
-            </li>
-            <li class="menu-item">
-                <div class="menu-title">
-                    <span class="icon">👷</span>
-                    <span>务工信息</span>
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="menu-title"><span class="icon">👷</span>务工信息<span class="arrow">▼</span></div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('外出务工')">外出务工</a></li>
                     <li><a href="#" onclick="switchPage('本地务工')">本地务工</a></li>
@@ -252,11 +124,7 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title">
-                    <span class="icon">👥</span>
-                    <span>村民信息</span>
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="menu-title"><span class="icon">👥</span>村民信息<span class="arrow">▼</span></div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('常住人口')">常住人口</a></li>
                     <li><a href="#" onclick="switchPage('流动人口')">流动人口</a></li>
@@ -265,11 +133,7 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title">
-                    <span class="icon">♿</span>
-                    <span>特殊群体</span>
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="menu-title"><span class="icon">♿</span>特殊群体<span class="arrow">▼</span></div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('视力听力残疾')">视力听力残疾</a></li>
                     <li><a href="#" onclick="switchPage('肢体智力残疾')">肢体智力残疾</a></li>
@@ -277,11 +141,7 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title">
-                    <span class="icon">⭐</span>
-                    <span>党员管理</span>
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="menu-title"><span class="icon">⭐</span>党员管理<span class="arrow">▼</span></div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('在职党员')">在职党员</a></li>
                     <li><a href="#" onclick="switchPage('流动党员')">流动党员</a></li>
@@ -289,11 +149,7 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title">
-                    <span class="icon">❤️</span>
-                    <span>帮扶台账</span>
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="menu-title"><span class="icon">❤️</span>帮扶台账<span class="arrow">▼</span></div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('一般脱贫户')">一般脱贫户</a></li>
                     <li><a href="#" onclick="switchPage('不稳定户')">不稳定户</a></li>
@@ -301,11 +157,7 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title">
-                    <span class="icon">🤝</span>
-                    <span>民政救助</span>
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="menu-title"><span class="icon">🤝</span>民政救助<span class="arrow">▼</span></div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('低保户')">低保户</a></li>
                     <li><a href="#" onclick="switchPage('特困户')">特困户</a></li>
@@ -313,11 +165,7 @@
                 </ul>
             </li>
             <li class="menu-item">
-                <div class="menu-title">
-                    <span class="icon">🌾</span>
-                    <span>土地台账</span>
-                    <span class="arrow">▼</span>
-                </div>
+                <div class="menu-title"><span class="icon">🌾</span>土地台账<span class="arrow">▼</span></div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('耕地信息')">耕地信息</a></li>
                     <li><a href="#" onclick="switchPage('宅基地')">宅基地</a></li>
@@ -333,7 +181,6 @@
     </div>
 
     <div class="main-content">
-        <!-- 首页 -->
         <div id="homePage" class="page active">
             <div class="home-wrap">
                 <h1 class="home-main-title">辛庄村管理系统</h1>
@@ -348,7 +195,6 @@
             </div>
         </div>
 
-        <!-- 台账列表页 -->
         <div id="listPage" class="page">
             <div class="card">
                 <div class="card-header">
@@ -360,7 +206,7 @@
                         <button class="btn btn-danger btn-sm" onclick="clearAllData()">清空全部</button>
                     </div>
                 </div>
-                <div id="listTableBox" style="padding: 0 22px 22px;">
+                <div id="listTableBox" style="padding:0 22px 22px">
                     <div class="empty-state"><p>当前分类暂无数据，请点击「新增」添加</p></div>
                 </div>
             </div>
@@ -374,7 +220,6 @@
         let currentCategory = "";
         let isEditMode = true;
 
-        // 切换页面
         function switchPage(type) {
             document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
             currentCategory = type;
@@ -386,23 +231,19 @@
                 document.getElementById("listPage").classList.add("active");
                 document.getElementById("listTitle").innerText = type + " 台账数据";
                 document.querySelector(".sys-title").innerText = "辛庄村管理系统 — " + type;
-                const filteredData = getFilterData();
-                renderEditableTable(filteredData);
+                renderEditableTable(getFilterData());
             }
         }
 
-        // 获取当前分类筛选后的数据
         function getFilterData() {
             return totalData.filter(item => {
-                const itemCategory = String(item[categoryKey] || "")
-                    .trim().replace(/\s+/g, "").toLowerCase();
-                const targetCategory = String(currentCategory)
-                    .trim().replace(/\s+/g, "").toLowerCase();
+                const itemCategory = String(item[categoryKey] || "").trim().replace(/\s+/g, "").toLowerCase();
+                const targetCategory = String(currentCategory).trim().replace(/\s+/g, "").toLowerCase();
                 return itemCategory === targetCategory;
             });
         }
 
-        // 渲染表格（修复引号问题，保证按钮可用）
+        // 修复点：把 isEdit 改成 isEditMode
         function renderEditableTable(data) {
             const box = document.getElementById("listTableBox");
             if (!data || data.length === 0) {
@@ -411,144 +252,117 @@
             }
             const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
             let html = '<table class="data-table"><thead><tr>';
-            for (let h of headers) {
-                html += '<th>' + h + '</th>';
-            }
+            headers.forEach(h => html += '<th>' + h + '</th>');
             html += '<th>操作</th></tr></tbody><tbody>';
-            for (let i = 0; i < data.length; i++) {
-                const row = data[i];
+            data.forEach((row, i) => {
                 html += '<tr data-row-idx="' + i + '">';
-                for (let field of headers) {
+                headers.forEach(field => {
                     const val = row[field] || '';
-                    const readOnly = isEdit ? '' : 'readonly';
-                    html += '<td><input class="editable" type="text" value="' + val + '" data-field="' + field + '" ' + readOnly + '></td>';
-                }
-                // 修复删除按钮引号，保证点击正常
-                html += '<td><button class="btn btn-danger btn-sm" onclick="deleteRow(' + i + ')">删除</button></td>';
-                html += '</tr>';
-            }
+                    const ro = isEditMode ? '' : 'readonly';
+                    html += `<td><input class="editable" type="text" value="${val}" data-field="${field}" ${ro}></td>`;
+                });
+                html += `<td><button class="btn btn-danger btn-sm" onclick="deleteRow(${i})">删除</button></td></tr>`;
+            });
             html += '</tbody></table>';
             box.innerHTML = html;
 
-            // 绑定回车新增事件
             const inputs = box.querySelectorAll(".editable");
             inputs.forEach(inp => {
-                inp.onkeydown = function(e) {
+                inp.onkeydown = e => {
                     if (e.key === "Enter" && isEditMode) {
                         e.preventDefault();
                         addNewRow();
                     }
-                }
+                };
             });
         }
 
-        // 开启编辑模式
         function openEdit() {
             isEditMode = true;
-            const filteredData = getFilterData();
-            renderEditableTable(filteredData);
-            alert("已开启编辑模式，可修改数据");
+            renderEditableTable(getFilterData());
+            alert("已开启编辑模式");
         }
 
-        // 新增数据行（核心修复，点击正常生效）
         function addNewRow() {
             if (!currentCategory) return;
             const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
             const newItem = {};
-            headers.forEach(h => {
-                newItem[h] = h === categoryKey ? currentCategory : "";
-            });
+            headers.forEach(h => newItem[h] = h === categoryKey ? currentCategory : "");
             totalData.push(newItem);
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-            const filteredData = getFilterData();
-            renderEditableTable(filteredData);
+            renderEditableTable(getFilterData());
         }
 
-        // 删除单行数据
         function deleteRow(index) {
-            if (!confirm("确定删除本条数据？")) return;
-            const filterList = getFilterData();
-            const realIdx = totalData.indexOf(filterList[index]);
-            if (realIdx > -1) {
-                totalData.splice(realIdx, 1);
+            if (!confirm("确定删除？")) return;
+            const list = getFilterData();
+            const idx = totalData.indexOf(list[index]);
+            if (idx > -1) {
+                totalData.splice(idx, 1);
                 localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                const filteredData = getFilterData();
-                renderEditableTable(filteredData);
+                renderEditableTable(getFilterData());
             }
         }
 
-        // 保存数据（保存后锁定编辑，数据不丢失）
         function saveChanges() {
             const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
-            const filterList = getFilterData();
-            rows.forEach((row, index) => {
-                const inputs = row.querySelectorAll(".editable");
-                const realIdx = totalData.indexOf(filterList[index]);
-                if (realIdx === -1) return;
-                inputs.forEach(inp => {
-                    const fd = inp.dataset.field;
-                    totalData[realIdx][fd] = inp.value;
+            const list = getFilterData();
+            rows.forEach((row, i) => {
+                const real = totalData.indexOf(list[i]);
+                if (real === -1) return;
+                row.querySelectorAll(".editable").forEach(inp => {
+                    totalData[real][inp.dataset.field] = inp.value;
                 });
             });
-            // 本地持久化存储
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-            // 保存后切换为只读模式
             isEditMode = false;
-            const filteredData = getFilterData();
-            renderEditableTable(filteredData);
-            alert("✅ 数据保存成功，已锁定编辑");
+            renderEditableTable(getFilterData());
+            alert("✅ 保存成功，已锁定编辑");
         }
 
-        // Excel导入功能
-        document.getElementById("excelFile").addEventListener("change", function(e) {
+        document.getElementById("excelFile").addEventListener("change", e => {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(ev) {
+            reader.onload = ev => {
                 try {
                     const wb = XLSX.read(ev.target.result, { type: "array" });
                     const sheet = wb.SheetNames[0];
                     excelHeaders = XLSX.utils.sheet_to_json(wb.Sheets[sheet], { header: 1 })[0];
                     categoryKey = excelHeaders.find(h => String(h).trim() === "分类名称") || excelHeaders[0];
                     const arr = XLSX.utils.sheet_to_json(wb.Sheets[sheet]);
-                    if (arr.length === 0) {
-                        alert("表格内容为空！");
-                        return;
-                    }
+                    if (arr.length === 0) { alert("表格为空"); return; }
                     totalData = totalData.concat(arr);
                     localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                    alert("✅ 成功导入 " + arr.length + " 条数据");
+                    alert("✅ 导入成功 " + arr.length + " 条");
                     switchPage(currentCategory);
                 } catch (err) {
-                    alert("导入失败，请检查表格格式");
+                    alert("导入失败");
                     console.error(err);
                 }
-                this.value = "";
+                e.target.value = "";
             };
             reader.readAsArrayBuffer(file);
         });
 
-        // 清空全部数据
         function clearAllData() {
-            if (!confirm("确定清空所有台账数据？此操作不可恢复！")) return;
+            if (!confirm("确定清空所有数据？")) return;
             totalData = [];
             excelHeaders = [];
             localStorage.removeItem("villageTotalData");
             switchPage(currentCategory);
-            alert("✅ 所有数据已清空");
+            alert("✅ 已清空");
         }
 
-        // 菜单展开/收起
         document.querySelectorAll(".menu-title").forEach(item => {
-            item.addEventListener("click", function() {
+            item.addEventListener("click", function () {
                 const parent = this.closest(".menu-item");
                 const arrow = this.querySelector(".arrow");
                 if (arrow) parent.classList.toggle("open");
             });
         });
 
-        // 页面初始化
-        window.onload = function() {
+        window.onload = function () {
             switchPage("home");
         };
     </script>
