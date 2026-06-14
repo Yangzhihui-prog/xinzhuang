@@ -415,14 +415,17 @@
             }
         }
 
-        // 获取当前分类数据
+        // 获取当前分类数据（过滤掉只有分类名称的空白行）
         function getFilterData() {
             if (!currentCategory) return [];
             const targetStandard = standardizeCategoryName(currentCategory);
+            const headers = tableHeaders[currentCategory];
             return totalData.filter(item => {
                 const itemCategory = String(item[categoryKey] || "");
                 const itemStandard = standardizeCategoryName(itemCategory);
-                return itemStandard === targetStandard;
+                // 过滤条件：分类名称匹配，且除了分类名称外，至少还有一个字段有值
+                const hasValidData = headers.some(h => h !== categoryKey && item[h] && String(item[h]).trim() !== '');
+                return itemStandard === targetStandard && hasValidData;
             });
         }
 
