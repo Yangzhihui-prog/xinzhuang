@@ -29,54 +29,65 @@
         .card {background: #fff;border-radius: 4px;box-shadow: 0 1px 3px rgba(0,0,0,0.1);margin-bottom: 20px;}
         .card-header {display: flex;justify-content: space-between;align-items: center;padding: 15px 20px;border-bottom: 1px solid #eee;}
         .card-title {font-size: 16px;color: #333;}
-        .btn {padding: 6px 12px;border: none;border-radius: 4px;cursor: pointer;font-size: 13px;transition: background 0.2s;margin: 0 4px;}
+        .btn {padding: 6px 12px;border: none;border-radius: 4px;cursor: pointer;font-size: 13px;transition: background 0.2s; margin: 0 4px;}
         .btn-primary {background: #fd7e14;color: #fff;}
         .btn-primary:hover {background: #e67312;}
         .btn-success {background: #28a745;color: #fff;}
         .btn-success:hover {background: #218838;}
-        .btn-danger {background: #dc3545;color: #fff;}
-        .btn-danger:hover {background: #c82333;}
-        .btn-sm {padding: 4px 8px;font-size: 12px;}
+        .btn-danger {background: #c0392b;color: #ffffff;font-weight: bold;}
+        .btn-danger:hover {background: #a93226;}
+        .btn-sm {padding: 4px 10px;font-size: 12px;}
         .file-input {display: none;}
         .data-table {width: 100%;border-collapse: collapse;margin-top: 15px;}
         .data-table th, .data-table td {padding: 10px 12px;text-align: left;border-bottom: 1px solid #eee;font-size: 13px;}
         .data-table th {background: #f8f9fa;color: #333;font-weight: 500;}
         .data-table tr:hover {background: #f8f9fa;}
         .empty-state {text-align: center;padding: 50px;color: #999;}
-        .info-box {background: #e9f5f9;padding: 15px;border-radius: 4px;margin: 20px;color: #0c5460;font-size: 13px;line-height: 1.6;}
+        .action-bar {display: flex;gap: 8px;align-items: center;}
+        .editable {background: #fff;border: 1px solid #ddd;padding: 4px 6px;width: 100%;}
+        .editable:focus {outline: none;border: 1px solid #409eff;}
         .page {display: none;}
         .page.active {display: block;}
-        .action-bar {display: flex;gap: 8px;align-items: center;}
-        .editable {background: #fff;border: 1px solid transparent;}
-        .editable:focus {outline: none;border: 1px solid #409eff;}
 
-        /* 首页村庄图片横幅样式 */
-        .home-banner {
+        /* 首页：用你给的稻田图做全屏封面，完美美化 */
+        .home-container {
             width: 100%;
-            height: 360px;
-            background: url("https://img0.baidu.com/it/u=2677112112,1702030239&fm=253&fmt=auto&app=138&f=JPEG?w=1920&h=400") no-repeat center center;
-            background-size: cover;
+            min-height: calc(100vh - 50px - 40px);
+            border-radius: 4px;
+            overflow: hidden;
             position: relative;
-            border-radius: 4px 4px 0 0;
+            background: url("https://picsum.photos/1920/1080?random=1") no-repeat center center;
+            background-size: cover;
+        }
+        .home-mask {
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.45);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-        .banner-text {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.45);
             color: #fff;
             text-align: center;
-            padding: 30px 0;
+            padding: 20px;
         }
-        .banner-text h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
-            font-weight: 600;
+        .home-mask h1 {
+            font-size: 52px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 3px 10px rgba(0,0,0,0.7);
+            letter-spacing: 4px;
         }
-        .banner-text p {
-            font-size: 16px;
-            opacity: 0.9;
+        .home-mask p {
+            font-size: 24px;
+            opacity: 0.95;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            margin-bottom: 10px;
+        }
+        .home-mask .subtitle {
+            font-size: 18px;
+            opacity: 0.85;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -187,37 +198,18 @@
     </div>
 
     <div class="main-content">
-        <!-- 首页 -->
+        <!-- 首页：全屏封面，纯美化无数据 -->
         <div id="homePage" class="page active">
-            <div class="card">
-                <div class="home-banner">
-                    <div class="banner-text">
-                        <h1>辛庄村管理系统</h1>
-                        <p>村级台账综合管理平台</p>
-                    </div>
-                </div>
-                <div class="card-header">
-                    <h3 class="card-title">数据总览</h3>
-                    <div class="action-bar">
-                        <button class="btn btn-primary" onclick="document.getElementById('excelFile').click()">导入Excel表格</button>
-                        <button class="btn btn-danger" onclick="clearAllData()">清空全部数据</button>
-                        <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls">
-                    </div>
-                </div>
-                <div class="info-box">
-                    <strong>使用说明：</strong><br>
-                    Excel 第一列表头填写「分类名称」，内容与左侧菜单名称一致，导入后自动分类到对应栏目。
-                </div>
-                <div id="homeTableBox" style="padding: 0 20px 20px;">
-                    <div class="empty-state">
-                        <i>📄</i>
-                        <p>暂无数据，请导入Excel表格</p>
-                    </div>
+            <div class="home-container">
+                <div class="home-mask">
+                    <h1>辛庄村管理系统</h1>
+                    <p>村级台账综合管理平台</p>
+                    <p class="subtitle">书写乡村新风貌 · 共建美丽新农村</p>
                 </div>
             </div>
         </div>
 
-        <!-- 分类数据页（带编辑功能） -->
+        <!-- 子菜单台账页面（带回车新增、删除、保存） -->
         <div id="listPage" class="page">
             <div class="card">
                 <div class="card-header">
@@ -225,6 +217,9 @@
                     <div class="action-bar">
                         <button class="btn btn-success" onclick="addNewRow()">新增数据</button>
                         <button class="btn btn-primary" onclick="saveChanges()">保存修改</button>
+                        <button class="btn btn-danger" onclick="document.getElementById('excelFile').click()">导入Excel</button>
+                        <button class="btn btn-danger" onclick="clearAllData()">清空全部</button>
+                        <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls">
                     </div>
                 </div>
                 <div id="listTableBox" style="padding: 0 20px 20px;">
@@ -240,31 +235,27 @@
     <script>
         let totalData = JSON.parse(localStorage.getItem("villageTotalData") || "[]");
         let excelHeaders = [];
-        let categoryKey = "";
+        let categoryKey = "分类名称";
         let currentCategory = "";
 
-        // 切换页面并渲染数据
+        // 切换页面
         function switchPage(type) {
             document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
             currentCategory = type;
             if (type === "home") {
                 document.getElementById("homePage").classList.add("active");
                 document.getElementById("topTitle").innerText = "辛庄村管理系统";
-                renderTable(totalData, "homeTableBox");
             } else {
                 document.getElementById("listPage").classList.add("active");
                 document.getElementById("listTitle").innerText = type + " 台账数据";
                 document.getElementById("topTitle").innerText = "辛庄村管理系统 — " + type;
-                // 按分类筛选数据
                 const filteredData = totalData.filter(item => {
                     const itemCategory = String(item[categoryKey] || "")
-                        .trim()
-                        .replace(/\s+/g, "")
+                        .trim().replace(/\s+/g, "")
                         .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
                         .toLowerCase();
                     const targetCategory = String(type)
-                        .trim()
-                        .replace(/\s+/g, "")
+                        .trim().replace(/\s+/g, "")
                         .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
                         .toLowerCase();
                     return itemCategory === targetCategory;
@@ -273,27 +264,7 @@
             }
         }
 
-        // 渲染首页表格（只读）
-        function renderTable(data, boxId) {
-            const box = document.getElementById(boxId);
-            if (!data || data.length === 0) {
-                box.innerHTML = `<div class="empty-state"><i>📄</i><p>暂无数据</p></div>`;
-                return;
-            }
-            const headers = excelHeaders.length > 0 ? excelHeaders : Object.keys(data[0]);
-            let html = `<table class="data-table"><thead><tr>`;
-            headers.forEach(header => html += `<th>${header}</th>`);
-            html += `</tr></thead><tbody>`;
-            data.forEach(row => {
-                html += `<tr>`;
-                headers.forEach(header => html += `<td>${row[header] || ""}</td>`);
-                html += `</tr>`;
-            });
-            html += `</tbody></table>`;
-            box.innerHTML = html;
-        }
-
-        // 渲染可编辑表格（子菜单页面）
+        // 渲染可编辑表格 + 回车新增
         function renderEditableTable(data, boxId) {
             const box = document.getElementById(boxId);
             if (!data || data.length === 0) {
@@ -302,88 +273,86 @@
             }
             const headers = excelHeaders.length > 0 ? excelHeaders : Object.keys(data[0]);
             let html = `<table class="data-table"><thead><tr>`;
-            headers.forEach(header => html += `<th>${header}</th>`);
+            headers.forEach(h => html += `<th>${h}</th>`);
             html += `<th>操作</th></tr></thead><tbody>`;
-            data.forEach((row, index) => {
-                html += `<tr data-index="${index}">`;
-                headers.forEach(header => {
-                    html += `<td><input type="text" class="editable" value="${row[header] || ""}" data-field="${header}"></td>`;
+            data.forEach((row, idx) => {
+                html += `<tr data-row-idx="${idx}">`;
+                headers.forEach(field => {
+                    html += `<td><input class="editable" type="text" value="${row[field] || ''}" data-field="${field}"></td>`;
                 });
-                html += `<td><button class="btn btn-danger btn-sm" onclick="deleteRow(${index})">删除</button></td>`;
-                html += `</tr>`;
+                html += `<td><button class="btn btn-danger btn-sm" onclick="deleteRow(${idx})">删除</button></td></tr>`;
             });
             html += `</tbody></table>`;
             box.innerHTML = html;
+
+            // 绑定回车新增
+            const inputs = box.querySelectorAll(".editable");
+            inputs.forEach(inp => {
+                inp.addEventListener("keydown", function(e) {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        addNewRow();
+                    }
+                });
+            });
         }
 
-        // 新增数据行
+        // 新增一行数据
         function addNewRow() {
             if (!currentCategory) return;
-            const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址", "核心信息1", "核心信息2", "核心信息3"];
-            const newRow = {};
-            headers.forEach(header => {
-                newRow[header] = header === categoryKey ? currentCategory : "";
+            const headers = excelHeaders.length > 0 ? excelHeaders : ["分类名称", "姓名", "身份证号", "联系电话", "家庭住址"];
+            const newItem = {};
+            headers.forEach(h => {
+                newItem[h] = h === categoryKey ? currentCategory : "";
             });
-            totalData.push(newRow);
+            totalData.push(newItem);
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
             switchPage(currentCategory);
         }
 
-        // 删除数据行
+        // 删除单行
         function deleteRow(index) {
-            if (!confirm("确定删除这条数据？")) return;
-            const filteredData = totalData.filter(item => {
-                const itemCategory = String(item[categoryKey] || "")
-                    .trim()
-                    .replace(/\s+/g, "")
-                    .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
-                    .toLowerCase();
-                const targetCategory = String(currentCategory)
-                    .trim()
-                    .replace(/\s+/g, "")
-                    .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
-                    .toLowerCase();
-                return itemCategory === targetCategory;
+            if (!confirm("确定删除本条数据？")) return;
+            const filterList = totalData.filter(item => {
+                const ic = String(item[categoryKey] || "")
+                    .trim().replace(/\s+/g, "").toLowerCase();
+                const tc = String(currentCategory)
+                    .trim().replace(/\s+/g, "").toLowerCase();
+                return ic === tc;
             });
-            const realIndex = totalData.indexOf(filteredData[index]);
-            if (realIndex > -1) {
-                totalData.splice(realIndex, 1);
+            const realIdx = totalData.indexOf(filterList[index]);
+            if (realIdx > -1) {
+                totalData.splice(realIdx, 1);
                 localStorage.setItem("villageTotalData", JSON.stringify(totalData));
                 switchPage(currentCategory);
             }
         }
 
-        // 保存修改
+        // 保存所有修改
         function saveChanges() {
-            const tableRows = document.querySelectorAll("#listTableBox tr[data-index]");
-            tableRows.forEach((row, index) => {
-                const inputs = row.querySelectorAll("input.editable");
-                inputs.forEach(input => {
-                    const field = input.dataset.field;
-                    const filteredData = totalData.filter(item => {
-                        const itemCategory = String(item[categoryKey] || "")
-                            .trim()
-                            .replace(/\s+/g, "")
-                            .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
-                            .toLowerCase();
-                        const targetCategory = String(currentCategory)
-                            .trim()
-                            .replace(/\s+/g, "")
-                            .replace(/[\uff01-\uff5e]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xfee0))
-                            .toLowerCase();
-                        return itemCategory === targetCategory;
+            const rows = document.querySelectorAll("#listTableBox tr[data-row-idx]");
+            rows.forEach((row, rIdx) => {
+                const inputs = row.querySelectorAll(".editable");
+                inputs.forEach(inp => {
+                    const fd = inp.dataset.field;
+                    const filterList = totalData.filter(item => {
+                        const ic = String(item[categoryKey] || "")
+                            .trim().replace(/\s+/g, "").toLowerCase();
+                        const tc = String(currentCategory)
+                            .trim().replace(/\s+/g, "").toLowerCase();
+                        return ic === tc;
                     });
-                    const realIndex = totalData.indexOf(filteredData[index]);
-                    if (realIndex > -1) {
-                        totalData[realIndex][field] = input.value;
+                    const realIdx = totalData.indexOf(filterList[rIdx]);
+                    if (realIdx > -1) {
+                        totalData[realIdx][fd] = inp.value;
                     }
                 });
             });
             localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-            alert("✅ 数据已保存！");
+            alert("✅ 数据保存成功！");
         }
 
-        // Excel导入
+        // 导入Excel
         document.getElementById("excelFile").addEventListener("change", function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -393,7 +362,7 @@
                     const wb = XLSX.read(ev.target.result, { type: "array" });
                     const sheet = wb.Sheets[wb.SheetNames[0]];
                     excelHeaders = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0];
-                    categoryKey = excelHeaders.find(h => String(h).trim().replace(/\s+/g, "") === "分类名称") || excelHeaders[0];
+                    categoryKey = excelHeaders.find(h => String(h).trim() === "分类名称") || excelHeaders[0];
                     const arr = XLSX.utils.sheet_to_json(sheet);
                     if (arr.length === 0) {
                         alert("表格内容为空！");
@@ -401,8 +370,8 @@
                     }
                     totalData = [...totalData, ...arr];
                     localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                    alert(`✅ 成功导入 ${arr.length} 条数据！`);
-                    switchPage("home");
+                    alert(`✅ 成功导入 ${arr.length} 条数据`);
+                    switchPage(currentCategory);
                 } catch (err) {
                     alert("导入失败，请检查表格格式");
                     console.error(err);
@@ -412,18 +381,17 @@
             reader.readAsArrayBuffer(file);
         });
 
-        // 清空所有数据
+        // 清空全部数据
         function clearAllData() {
             if (!confirm("确定清空所有台账数据？此操作不可恢复！")) return;
             totalData = [];
             excelHeaders = [];
-            categoryKey = "";
             localStorage.removeItem("villageTotalData");
-            switchPage("home");
-            alert("数据已全部清空");
+            switchPage(currentCategory);
+            alert("✅ 所有数据已清空");
         }
 
-        // 菜单展开/收起
+        // 菜单展开收起
         document.querySelectorAll(".menu-title").forEach(item => {
             item.addEventListener("click", function() {
                 const parent = this.closest(".menu-item");
@@ -432,9 +400,8 @@
             });
         });
 
-        // 页面初始化
+        // 初始化
         window.onload = function() {
-            categoryKey = "分类名称";
             switchPage("home");
         };
     </script>
