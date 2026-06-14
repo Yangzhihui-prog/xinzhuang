@@ -90,32 +90,44 @@
         </div>
     </div>
 
-    <script type="module">
-        const SUPABASE_URL = "https://ihkgdxthshfzsdtbwje.supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_HGvaSBNMy189hWZKW8XDzA_CciDVbse";
-        const TABLE_NAME = "village_data";
+    <script>
+        // 全局Supabase客户端
+        let supabase;
 
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            auth: { persistSession: false },
-            global: { headers: { 'apikey': SUPABASE_ANON_KEY } }
-        });
-        console.log("✅ Supabase 客户端初始化成功！", supabase);
+        // 初始化Supabase客户端
+        async function initSupabase() {
+            const SUPABASE_URL = "https://ihkgdxthshfzsdtbwje.supabase.co";
+            const SUPABASE_ANON_KEY = "sb_publishable_HGvaSBNMy189hWZKW8XDzA_CciDVbse";
+            const TABLE_NAME = "village_data";
 
-        let currentData = [];
+            try {
+                const { createClient } = await import("https://esm.run/@supabase/supabase-js@2");
+                supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    auth: { persistSession: false },
+                    global: { headers: { 'apikey': SUPABASE_ANON_KEY } }
+                });
+                console.log("✅ Supabase 客户端初始化成功！", supabase);
+                await loadAllCloudData();
+            } catch (err) {
+                console.error("❌ Supabase 初始化失败：", err);
+            }
+        }
 
-        window.onload = async function() {
-            await loadAllCloudData();
-        };
+        // 页面切换函数
+        function showPage(pageName) {
+            console.log("切换到页面：", pageName);
+        }
 
+        // 加载数据
         async function loadAllCloudData() {
+            if (!supabase) return;
+            const TABLE_NAME = "village_data";
             try {
                 const { data, error } = await supabase
                     .from(TABLE_NAME)
                     .select('*');
 
                 if (error) throw error;
-                currentData = data;
                 renderDataTable(data);
                 console.log("✅ 数据加载成功：", data);
             } catch (err) {
@@ -124,6 +136,7 @@
             }
         }
 
+        // 渲染表格
         function renderDataTable(data) {
             const container = document.getElementById('data-container');
             if (!data || data.length === 0) {
@@ -156,7 +169,9 @@
             container.innerHTML = tableHTML;
         }
 
+        // Excel导入
         document.getElementById('file-input').addEventListener('change', async function(e) {
+            if (!supabase) return;
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -172,7 +187,7 @@
                         return;
                     }
                     const { error } = await supabase
-                        .from(TABLE_NAME)
+                        .from("village_data")
                         .insert(jsonData);
                     if (error) throw error;
                     alert(`✅ 成功导入 ${jsonData.length} 条数据！`);
@@ -185,11 +200,13 @@
             reader.readAsArrayBuffer(file);
         });
 
+        // 清空数据
         async function clearAllData() {
+            if (!supabase) return;
             if (!confirm("确定要清空所有数据吗？此操作不可恢复！")) return;
             try {
                 const { error } = await supabase
-                    .from(TABLE_NAME)
+                    .from("village_data")
                     .delete().neq('id', 0);
                 if (error) throw error;
                 alert("✅ 数据已清空！");
@@ -200,9 +217,10 @@
             }
         }
 
-        function showPage(pageName) {
-            console.log("切换到页面：", pageName);
-        }
+        // 页面加载后初始化
+        window.onload = async function() {
+            await initSupabase();
+        };
     </script>
 </body>
 </html>
