@@ -44,31 +44,27 @@
         .page {display: none;}
         .page.active {display: block;}
 
-        /* 首页村庄大图样式 */
+        /* 首页横幅样式 */
         .home-banner {
             width: 100%;
-            height: 360px;
-            background: url("https://img0.baidu.com/it/u=2677112112,1702030239&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=400") no-repeat center;
-            background-size: cover;
+            height: 120px;
+            background: #999;
             position: relative;
             border-radius: 4px 4px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .banner-text {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.45);
             color: #fff;
             text-align: center;
-            padding: 25px 0;
         }
         .banner-text h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
+            font-size: 28px;
+            margin-bottom: 5px;
         }
         .banner-text p {
-            font-size: 16px;
+            font-size: 14px;
             opacity: 0.9;
         }
     </style>
@@ -90,7 +86,7 @@
                 <div class="menu-title">
                     <span class="icon">👷</span>
                     <span>务工信息</span>
-                    <span class="arrow">▲</span>
+                    <span class="arrow">▼</span>
                 </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('外出务工')">外出务工</a></li>
@@ -102,7 +98,7 @@
                 <div class="menu-title">
                     <span class="icon">👥</span>
                     <span>村民信息</span>
-                    <span class="arrow">▲</span>
+                    <span class="arrow">▼</span>
                 </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('常住人口')">常住人口</a></li>
@@ -115,7 +111,7 @@
                 <div class="menu-title">
                     <span class="icon">♿</span>
                     <span>特殊群体</span>
-                    <span class="arrow">▲</span>
+                    <span class="arrow">▼</span>
                 </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('视力听力残疾')">视力听力残疾</a></li>
@@ -127,7 +123,7 @@
                 <div class="menu-title">
                     <span class="icon">⭐</span>
                     <span>党员管理</span>
-                    <span class="arrow">▲</span>
+                    <span class="arrow">▼</span>
                 </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('在职党员')">在职党员</a></li>
@@ -139,7 +135,7 @@
                 <div class="menu-title">
                     <span class="icon">❤️</span>
                     <span>帮扶台账</span>
-                    <span class="arrow">▲</span>
+                    <span class="arrow">▼</span>
                 </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('一般脱贫户')">一般脱贫户</a></li>
@@ -151,7 +147,7 @@
                 <div class="menu-title">
                     <span class="icon">🤝</span>
                     <span>民政救助</span>
-                    <span class="arrow">▲</span>
+                    <span class="arrow">▼</span>
                 </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('低保户')">低保户</a></li>
@@ -163,7 +159,7 @@
                 <div class="menu-title">
                     <span class="icon">🌾</span>
                     <span>土地台账</span>
-                    <span class="arrow">▲</span>
+                    <span class="arrow">▼</span>
                 </div>
                 <ul class="submenu">
                     <li><a href="#" onclick="switchPage('耕地信息')">耕地信息</a></li>
@@ -180,7 +176,7 @@
     </div>
 
     <div class="main-content">
-        <!-- 首页（村庄大图 + 系统署名） -->
+        <!-- 首页 -->
         <div id="homePage" class="page active">
             <div class="card">
                 <div class="home-banner">
@@ -199,7 +195,7 @@
                 </div>
                 <div class="info-box">
                     <strong>使用说明：</strong><br>
-                    Excel 表格第一列表头请填写 <b>分类名称</b>，内容与左侧菜单名称一致，导入后自动分类到对应栏目。
+                    Excel 表格第一列请填写 <b>分类名称</b>，内容与左侧菜单名称一致，导入后自动分类到对应栏目。
                 </div>
                 <div id="homeTableBox" style="padding: 0 20px 20px;">
                     <div class="empty-state">
@@ -228,86 +224,97 @@
 
     <script>
         let totalData = JSON.parse(localStorage.getItem("villageTotalData") || "[]");
-        let currentType = "home";
+        let excelHeaders = [];
 
+        // 切换页面并渲染对应分类数据
         function switchPage(type) {
-            currentType = type;
             document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-            if(type === "home"){
+            if (type === "home") {
                 document.getElementById("homePage").classList.add("active");
                 document.getElementById("topTitle").innerText = "辛庄村管理系统";
                 renderTable(totalData, "homeTableBox");
-            }else{
+            } else {
                 document.getElementById("listPage").classList.add("active");
                 document.getElementById("listTitle").innerText = type + " 台账数据";
                 document.getElementById("topTitle").innerText = "辛庄村管理系统 — " + type;
-                const filterData = totalData.filter(item => item["分类名称"] === type);
-                renderTable(filterData, "listTableBox");
+                // 按「分类名称」列筛选数据
+                const filteredData = totalData.filter(item => item["分类名称"] === type);
+                renderTable(filteredData, "listTableBox");
             }
         }
 
+        // 渲染表格（严格保留Excel表头顺序）
         function renderTable(data, boxId) {
             const box = document.getElementById(boxId);
-            if(!data || data.length === 0){
+            if (!data || data.length === 0) {
                 box.innerHTML = `<div class="empty-state"><i>📄</i><p>暂无数据</p></div>`;
                 return;
             }
-            const keys = Object.keys(data[0]);
+            const headers = excelHeaders.length > 0 ? excelHeaders : Object.keys(data[0]);
             let html = `<table class="data-table"><thead><tr>`;
-            keys.forEach(k=> html += `<th>${k}</th>`);
+            headers.forEach(header => html += `<th>${header}</th>`);
             html += `</tr></thead><tbody>`;
-            data.forEach(row=>{
+            data.forEach(row => {
                 html += `<tr>`;
-                keys.forEach(k=> html += `<td>${row[k] || ""}</td>`);
+                headers.forEach(header => html += `<td>${row[header] || ""}</td>`);
                 html += `</tr>`;
             });
             html += `</tbody></table>`;
             box.innerHTML = html;
         }
 
-        document.getElementById("excelFile").addEventListener("change", function(e){
+        // Excel导入（修正分类逻辑，匹配你的Excel表头）
+        document.getElementById("excelFile").addEventListener("change", function(e) {
             const file = e.target.files[0];
-            if(!file) return;
+            if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(ev){
-                try{
-                    const buf = ev.target.result;
-                    const wb = XLSX.read(buf, {type:"array"});
+            reader.onload = function(ev) {
+                try {
+                    const wb = XLSX.read(ev.target.result, { type: "array" });
                     const sheet = wb.Sheets[wb.SheetNames[0]];
+                    // 读取Excel原始表头
+                    excelHeaders = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0];
+                    // 读取完整数据
                     const arr = XLSX.utils.sheet_to_json(sheet);
-                    if(arr.length === 0){
+                    if (arr.length === 0) {
                         alert("表格内容为空！");
                         return;
                     }
-                    totalData = totalData.concat(arr);
+                    // 追加数据到全局存储
+                    totalData = [...totalData, ...arr];
                     localStorage.setItem("villageTotalData", JSON.stringify(totalData));
-                    alert(`成功导入 ${arr.length} 条数据，已自动分类！`);
+                    alert(`✅ 成功导入 ${arr.length} 条数据，已自动分类！`);
                     switchPage("home");
-                }catch(err){
+                } catch (err) {
                     alert("导入失败，请检查表格格式");
+                    console.error(err);
                 }
                 this.value = "";
             };
             reader.readAsArrayBuffer(file);
         });
 
-        function clearAllData(){
-            if(!confirm("确定清空所有台账数据？此操作不可恢复！")) return;
+        // 清空所有数据
+        function clearAllData() {
+            if (!confirm("确定清空所有台账数据？此操作不可恢复！")) return;
             totalData = [];
+            excelHeaders = [];
             localStorage.removeItem("villageTotalData");
             switchPage("home");
             alert("数据已全部清空");
         }
 
-        document.querySelectorAll(".menu-title").forEach(item=>{
-            item.addEventListener("click", function(){
+        // 菜单展开/收起
+        document.querySelectorAll(".menu-title").forEach(item => {
+            item.addEventListener("click", function() {
                 const parent = this.closest(".menu-item");
                 const arrow = this.querySelector(".arrow");
-                if(arrow) parent.classList.toggle("open");
+                if (arrow) parent.classList.toggle("open");
             });
         });
 
-        window.onload = function(){
+        // 页面初始化
+        window.onload = function() {
             switchPage("home");
         };
     </script>
