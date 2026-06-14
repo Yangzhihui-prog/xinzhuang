@@ -11,7 +11,7 @@
         .sys-title {color: #fff;font-size: 16px;flex: 1;}
         .back-index {padding: 6px 16px;background: #20c997;color: #fff;text-decoration: none;border-radius: 4px;font-size: 14px;}
         .sidebar {width: 220px;background: #0c5460;color: #fff;min-height: 100vh;position: fixed;top: 0;left: 0;}
-        .sidebar-header {padding: 15px;border-bottom: 1px solid rgba(255,255,255,0.1);background: #0a4c55;}
+        .sidebar-header {padding: 15px;border-bottom: 1px solid rgba(255,255,0.1);background: #0a4c55;}
         .sidebar-header h2 {font-size: 16px;margin-bottom: 3px;}
         .sidebar-header p {font-size: 12px;opacity: 0.8;}
         .menu {list-style: none;}
@@ -49,14 +49,15 @@
         .page {display: none;}
         .page.active {display: block;}
 
-        /* 首页：用你给的稻田图做全屏封面，完美美化 */
+        /* 首页背景 - 已改为固定图片，刷新不再切换 */
         .home-container {
             width: 100%;
             min-height: calc(100vh - 50px - 40px);
             border-radius: 4px;
             overflow: hidden;
             position: relative;
-            background: url("https://img95.699pic.com/desgin_photo/40194/1302_list.jpg") no-repeat center center;
+            /* 固定乡村风景图，永久不随机 */
+            background: url("https://picsum.photos/id/110/1920/1080") no-repeat center center;
             background-size: cover;
         }
         .home-mask {
@@ -75,7 +76,7 @@
             font-size: 52px;
             font-weight: bold;
             margin-bottom: 20px;
-            text-shadow: 0 3px 10px rgba(0,0,0,0.7);
+            text-shadow: 0 3px 10px rgba(0,0,0.7);
             letter-spacing: 4px;
         }
         .home-mask p {
@@ -224,7 +225,6 @@
                 </div>
                 <div id="listTableBox" style="padding: 0 20px 20px;">
                     <div class="empty-state">
-                        <i>📄</i>
                         <p>当前分类暂无数据，请点击「新增数据」添加</p>
                     </div>
                 </div>
@@ -268,7 +268,7 @@
         function renderEditableTable(data, boxId) {
             const box = document.getElementById(boxId);
             if (!data || data.length === 0) {
-                box.innerHTML = `<div class="empty-state"><i>📄</i><p>当前分类暂无数据，请点击「新增数据」添加</p></div>`;
+                box.innerHTML = `<div class="empty-state"><p>当前分类暂无数据，请点击「新增数据」添加</p></div>`;
                 return;
             }
             const headers = excelHeaders.length > 0 ? excelHeaders : Object.keys(data[0]);
@@ -360,10 +360,10 @@
             reader.onload = function(ev) {
                 try {
                     const wb = XLSX.read(ev.target.result, { type: "array" });
-                    const sheet = wb.Sheets[wb.SheetNames[0]];
-                    excelHeaders = XLSX.utils.sheet_to_json(sheet, { header: 1 })[0];
+                    const sheet = wb.SheetNames[0];
+                    excelHeaders = XLSX.utils.sheet_to_json(wb.Sheets[sheet], { header: 1 })[0];
                     categoryKey = excelHeaders.find(h => String(h).trim() === "分类名称") || excelHeaders[0];
-                    const arr = XLSX.utils.sheet_to_json(sheet);
+                    const arr = XLSX.utils.sheet_to_json(wb.Sheets[sheet]);
                     if (arr.length === 0) {
                         alert("表格内容为空！");
                         return;
