@@ -7,88 +7,197 @@
     <style>
         * {margin: 0;padding: 0;box-sizing: border-box;}
         body {font-family: "Microsoft Yahei",sans-serif;background: #f4f6f8;display: flex;}
-        .top-bar {position: fixed;top: 0;left: 220px;right: 0;height: 50px;background: #0c5460;display: flex;align-items: center;padding: 0 25px;z-index: 100;}
+        /* 顶部导航栏 */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 220px;
+            right: 0;
+            height: 50px;
+            background: #0c5460;
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            z-index: 100;
+        }
         .sys-title {color: #fff;font-size: 16px;flex: 1;}
-        .back-index {padding: 6px 16px;background: #20c997;color: #fff;text-decoration: none;border-radius: 4px;font-size: 14px;}
-        .sidebar {width: 220px;background: #0c5460;color: #fff;min-height: 100vh;position: fixed;top: 0;left: 0;}
-        .sidebar-header {padding: 15px;border-bottom: 1px solid rgba(255,255,0.1);background: #0a4c55;}
-        .sidebar-header h2 {font-size: 16px;margin-bottom: 3px;}
-        .sidebar-header p {font-size: 12px;opacity: 0.8;}
+        .back-index {
+            padding: 6px 16px;
+            background: #20c997;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        /* 左侧侧边栏 */
+        .sidebar {
+            width: 220px;
+            background: #0c5460;
+            color: #fff;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        .sidebar-header {
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            background: #0a4c55;
+            text-align: center;
+        }
+        .sidebar-header h2 {font-size: 18px;margin-bottom: 6px;}
+        .sidebar-header p {font-size: 13px;opacity: 0.85;}
         .menu {list-style: none;}
         .menu-item {border-bottom: 1px solid rgba(255,255,255,0.05);}
-        .menu-title {display: flex;align-items: center;padding: 12px 15px;color: #fff;text-decoration: none;cursor: pointer;transition: background 0.2s;font-size: 14px;}
-        .menu-title:hover {background: #0a4c55;}
-        .icon {margin-right: 10px;}
+        .menu-title {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.25s;
+            font-size: 14px;
+        }
+        .menu-title:hover {background: #083e45;}
+        .icon {margin-right: 10px;font-size: 15px;}
         .arrow {margin-left: auto;transition: transform 0.3s ease;}
-        .submenu {list-style: none;max-height: 0;overflow: hidden;transition: max-height 0.3s ease;background: #09454d;}
-        .submenu li a {display: block;padding: 10px 15px 10px 40px;color: #ddd;text-decoration: none;font-size: 13px;}
+        .submenu {
+            list-style: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #09454d;
+        }
+        .submenu li a {
+            display: block;
+            padding: 11px 15px 11px 45px;
+            color: #ddd;
+            text-decoration: none;
+            font-size: 13px;
+        }
         .submenu li a:hover {background: #083e45;}
         .menu-item.open .arrow {transform: rotate(180deg);}
-        .menu-item.open .submenu {max-height: 500px;}
-        .main-content {flex: 1;margin-left: 220px;margin-top: 50px;padding: 20px;}
-        .card {background: #fff;border-radius: 4px;box-shadow: 0 1px 3px rgba(0,0,0,0.1);margin-bottom: 20px;}
-        .card-header {display: flex;justify-content: space-between;align-items: center;padding: 15px 20px;border-bottom: 1px solid #eee;}
-        .card-title {font-size: 16px;color: #333;}
-        .btn {padding: 6px 12px;border: none;border-radius: 4px;cursor: pointer;font-size: 13px;transition: background 0.2s; margin: 0 4px;}
+        .menu-item.open .submenu {max-height: 600px;}
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            margin-left: 220px;
+            margin-top: 50px;
+            padding: 25px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 22px;
+            border-bottom: 1px solid #eee;
+        }
+        .card-title {font-size: 17px;color: #333;font-weight: 500;}
+        /* 按钮样式 */
+        .btn {
+            padding: 7px 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
         .btn-primary {background: #fd7e14;color: #fff;}
         .btn-primary:hover {background: #e67312;}
         .btn-success {background: #28a745;color: #fff;}
         .btn-success:hover {background: #218838;}
-        .btn-danger {background: #c0392b;color: #ffffff;font-weight: bold;}
+        .btn-danger {
+            background: #c0392b;
+            color: #ffffff;
+            font-weight: 500;
+        }
         .btn-danger:hover {background: #a93226;}
-        .btn-sm {padding: 4px 10px;font-size: 12px;}
+        .btn-sm {padding: 5px 10px;font-size: 12px;}
         .file-input {display: none;}
-        .data-table {width: 100%;border-collapse: collapse;margin-top: 15px;}
-        .data-table th, .data-table td {padding: 10px 12px;text-align: left;border-bottom: 1px solid #eee;font-size: 13px;}
-        .data-table th {background: #f8f9fa;color: #333;font-weight: 500;}
-        .data-table tr:hover {background: #f8f9fa;}
-        .empty-state {text-align: center;padding: 50px;color: #999;}
-        .action-bar {display: flex;gap: 8px;align-items: center;}
-        .editable {background: #fff;border: 1px solid #ddd;padding: 4px 6px;width: 100%;}
-        .editable:focus {outline: none;border: 1px solid #409eff;}
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .data-table th, .data-table td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        .data-table th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: 500;
+        }
+        .data-table tr:hover {background: #fafafa;}
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 14px;
+        }
+        .action-bar {display: flex;gap: 10px;align-items: center;}
+        .editable {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 5px 8px;
+            width: 100%;
+            border-radius: 4px;
+        }
+        .editable:focus {
+            outline: none;
+            border: 1px solid #409eff;
+        }
         .page {display: none;}
         .page.active {display: block;}
 
-        /* 首页背景 - 已改为固定图片，刷新不再切换 */
-        .home-container {
+        /* ========== 纯美化首页（无图片）========== */
+        .home-wrap {
             width: 100%;
-            min-height: calc(100vh - 50px - 40px);
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-            /* 固定乡村风景图，永久不随机 */
-            background: url("https://picsum.photos/id/110/1920/1080") no-repeat center center;
-            background-size: cover;
-        }
-        .home-mask {
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.45);
+            min-height: calc(100vh - 50px - 50px);
+            background: linear-gradient(135deg, #edf6f9 0%, #e8f4f8 100%);
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
-        .home-mask h1 {
-            font-size: 52px;
+        .home-line {
+            width: 120px;
+            height: 3px;
+            background: #0c5460;
+            border-radius: 2px;
+            margin: 18px 0;
+        }
+        .home-main-title {
+            font-size: 46px;
+            color: #0c5460;
             font-weight: bold;
-            margin-bottom: 20px;
-            text-shadow: 0 3px 10px rgba(0,0,0.7);
-            letter-spacing: 4px;
+            letter-spacing: 6px;
+            text-align: center;
         }
-        .home-mask p {
-            font-size: 24px;
-            opacity: 0.95;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-            margin-bottom: 10px;
+        .home-sub-title {
+            font-size: 22px;
+            color: #2d6a78;
+            margin-bottom: 12px;
         }
-        .home-mask .subtitle {
-            font-size: 18px;
-            opacity: 0.85;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        .home-desc {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+            line-height: 1.8;
+            text-align: center;
         }
     </style>
 </head>
@@ -194,23 +303,22 @@
     </div>
 
     <div class="top-bar">
-        <div class="sys-title" id="topTitle">辛庄村管理系统</div>
+        <div class="sys-title">辛庄村管理系统</div>
         <a href="#" class="back-index" onclick="switchPage('home')">返回首页</a>
     </div>
 
     <div class="main-content">
-        <!-- 首页：全屏封面，纯美化无数据 -->
+        <!-- 首页：纯样式美化，无图片 -->
         <div id="homePage" class="page active">
-            <div class="home-container">
-                <div class="home-mask">
-                    <h1>辛庄村管理系统</h1>
-                    <p>村级台账综合管理平台</p>
-                    <p class="subtitle">书写乡村新风貌 · 共建美丽新农村</p>
-                </div>
+            <div class="home-wrap">
+                <h1 class="home-main-title">辛庄村管理系统</h1>
+                <div class="home-line"></div>
+                <p class="home-sub-title">村级台账综合管理平台</p>
+                <p class="home-desc">规范村级台账 · 提升管理效率 · 服务乡村发展</p>
             </div>
         </div>
 
-        <!-- 子菜单台账页面（带回车新增、删除、保存） -->
+        <!-- 子菜单台账页面 -->
         <div id="listPage" class="page">
             <div class="card">
                 <div class="card-header">
@@ -223,7 +331,7 @@
                         <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xls">
                     </div>
                 </div>
-                <div id="listTableBox" style="padding: 0 20px 20px;">
+                <div id="listTableBox" style="padding: 0 22px 22px;">
                     <div class="empty-state">
                         <p>当前分类暂无数据，请点击「新增数据」添加</p>
                     </div>
@@ -244,11 +352,11 @@
             currentCategory = type;
             if (type === "home") {
                 document.getElementById("homePage").classList.add("active");
-                document.getElementById("topTitle").innerText = "辛庄村管理系统";
+                document.querySelector(".sys-title").innerText = "辛庄村管理系统";
             } else {
                 document.getElementById("listPage").classList.add("active");
                 document.getElementById("listTitle").innerText = type + " 台账数据";
-                document.getElementById("topTitle").innerText = "辛庄村管理系统 — " + type;
+                document.querySelector(".sys-title").innerText = "辛庄村管理系统 — " + type;
                 const filteredData = totalData.filter(item => {
                     const itemCategory = String(item[categoryKey] || "")
                         .trim().replace(/\s+/g, "")
@@ -285,7 +393,6 @@
             html += `</tbody></table>`;
             box.innerHTML = html;
 
-            // 绑定回车新增
             const inputs = box.querySelectorAll(".editable");
             inputs.forEach(inp => {
                 inp.addEventListener("keydown", function(e) {
@@ -314,10 +421,8 @@
         function deleteRow(index) {
             if (!confirm("确定删除本条数据？")) return;
             const filterList = totalData.filter(item => {
-                const ic = String(item[categoryKey] || "")
-                    .trim().replace(/\s+/g, "").toLowerCase();
-                const tc = String(currentCategory)
-                    .trim().replace(/\s+/g, "").toLowerCase();
+                const ic = String(item[categoryKey] || "").trim().replace(/\s+/g, "").toLowerCase();
+                const tc = String(currentCategory).trim().replace(/\s+/g, "").toLowerCase();
                 return ic === tc;
             });
             const realIdx = totalData.indexOf(filterList[index]);
@@ -336,10 +441,8 @@
                 inputs.forEach(inp => {
                     const fd = inp.dataset.field;
                     const filterList = totalData.filter(item => {
-                        const ic = String(item[categoryKey] || "")
-                            .trim().replace(/\s+/g, "").toLowerCase();
-                        const tc = String(currentCategory)
-                            .trim().replace(/\s+/g, "").toLowerCase();
+                        const ic = String(item[categoryKey] || "").trim().replace(/\s+/g, "").toLowerCase();
+                        const tc = String(currentCategory).trim().replace(/\s+/g, "").toLowerCase();
                         return ic === tc;
                     });
                     const realIdx = totalData.indexOf(filterList[rIdx]);
