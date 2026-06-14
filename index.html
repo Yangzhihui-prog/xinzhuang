@@ -7,13 +7,19 @@
     <style>
         * {margin: 0;padding: 0;box-sizing: border-box;}
         body {font-family: "Microsoft Yahei", sans-serif;background: #f4f6f8;display: flex;}
+        /* 搜索高亮样式 */
+        .name-highlight {
+            background-color: #fff350 !important;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
         /* 登录弹窗 */
         .login-modal {
             position: fixed;top: 0;left: 0;right: 0;bottom: 0;
             background: rgba(0,0,0,0.7);display: flex;align-items: center;justify-content: center;z-index: 9999;
         }
         .login-box {
-            background: #fff;padding: 30px;border-radius: 8px;box-shadow: 0 5px 20px rgba(0,0,0.2);width: 300px;
+            background: #fff;padding: 30px;border-radius: 8px;box-shadow: 0 5px 20px rgba(0,0,0,0.2);width: 300px;
         }
         .login-title {font-size: 20px;color: #0c5460;text-align: center;margin-bottom: 20px;}
         .login-input {
@@ -97,6 +103,14 @@
         .btn-danger:hover {background: #c82333;}
         .btn-sm {padding: 5px 10px;font-size: 12px;}
         .action-bar {display: flex;gap: 10px;align-items: center;flex-wrap: wrap;}
+        /* 搜索框样式 */
+        .search-input {
+            padding: 7px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 13px;
+            width: 160px;
+        }
         /* 表格样式 */
         .table-wrap {
             width: 100%;overflow-x: auto;position: relative;
@@ -329,6 +343,11 @@
                 <div class="card-header">
                     <h3 class="card-title" id="listTitle">分类数据</h3>
                     <div class="action-bar">
+                        <!-- 人名搜索区域 -->
+                        <input type="text" class="search-input" id="nameSearchVal" placeholder="输入人名搜索">
+                        <button class="btn btn-info" onclick="searchByName()">姓名搜索</button>
+                        <button class="btn btn-sm btn-primary" onclick="resetSearch()">重置</button>
+                        <!-- 原有按钮 -->
                         <button class="btn btn-success" onclick="openAddModal()">新增</button>
                         <button class="btn btn-info" onclick="openEdit()">编辑</button>
                         <button class="btn btn-primary" onclick="saveChanges()">保存</button>
@@ -368,6 +387,10 @@
         let categoryKey = "分类名称";
         let currentCategory = "";
         let isEditMode = false;
+        // 保存原始数据，用于搜索重置
+        let originFilterData = [];
+        // 当前搜索关键词
+        let currentSearchKey = "";
 
         // 所有分类表头配置
         const tableHeaders = {
@@ -425,10 +448,13 @@
             } else {
                 currentCategory = type;
                 isEditMode = false;
+                currentSearchKey = "";
+                document.getElementById("nameSearchVal").value = "";
                 document.getElementById("listPage").classList.add("active");
                 document.getElementById("listTitle").textContent = `${type} 台账数据`;
                 document.getElementById("topBarTitle").textContent = `辛庄村管理系统 — ${type}`;
-                renderEditableTable(getFilterData());
+                originFilterData = getFilterData();
+                renderEditableTable(originFilterData);
             }
         }
         // 兼容老党员台账菜单点击
@@ -449,7 +475,37 @@
             });
         }
 
-        // 渲染表格
+        // ===== 人名搜索 + 高亮功能 =====
+        function searchByName() {
+            let keyword = document.getElementById("nameSearchVal").value.trim();
+            currentSearchKey = keyword;
+            if(!keyword){
+                alert("请输入要搜索的人名");
+                return;
+            }
+            // 耕地/宅基地/土地流转 无姓名字段，提示
+            const noNameList = ['耕地信息','宅基地','土地流转'];
+            if(noNameList.includes(currentCategory)){
+                alert("当前分类无「姓名」字段，无法按人名搜索");
+                return;
+            }
+            // 模糊匹配姓名
+            let result = originFilterData.filter(row =>{
+                return row['姓名'] && row['姓名'].includes(keyword);
+            });
+            renderEditableTable(result);
+            if(result.length === 0){
+                alert("未找到匹配人名的数据");
+            }
+        }
+        // 重置搜索，恢复全部数据并清除高亮
+        function resetSearch(){
+            document.getElementById("nameSearchVal").value = "";
+            currentSearchKey = "";
+            renderEditableTable(originFilterData);
+        }
+
+        // 渲染表格 + 关键词高亮
         function renderEditableTable(data) {
             const box = document.getElementById("listTableBox");
             if (!currentCategory || !tableHeaders[currentCategory]) {
@@ -464,10 +520,19 @@
             let html = '<div class="table-wrap"><table class="data-table"><thead><tr>';
             headers.forEach(h => html += `<th>${h}</th>`);
             html += '<th>操作</th></tr></thead><tbody>';
+            
+            // 遍历数据，处理姓名高亮
             data.forEach((row, i) => {
                 html += `<tr data-row-idx="${i}">`;
                 headers.forEach(field => {
-                    const val = row[field] || '';
+                    let val = row[field] || '';
+                    // 姓名列 + 有搜索关键词 → 增加高亮
+                    if(field === '姓名' && currentSearchKey){
+                        val = val.replace(
+                            new RegExp(currentSearchKey, 'g'),
+                            `<span class="name-highlight">${currentSearchKey}</span>`
+                        );
+                    }
                     const disabled = isEditMode ? '' : 'disabled';
                     html += `<td><input class="editable" type="text" value="${val}" data-field="${field}" ${disabled}></td>`;
                 });
@@ -513,7 +578,7 @@
             const filterData = getFilterData();
             const targetStandard = standardizeCategoryName(currentCategory);
             const globalIndex = totalData.findIndex(item =>
-                standardizeCategoryName(item[categoryKey]) === targetStandard && item === filter[index]
+                standardizeCategoryName(item[categoryKey]) === targetStandard && item === filterData[index]
             );
             if (globalIndex !== -1) {
                 totalData.splice(globalIndex, 1);
@@ -537,7 +602,7 @@
             if (!confirm("确定清空系统所有数据？")) return;
             totalData = [];
             localStorage.removeItem("villageTotalData");
-            if (currentCategory) renderEditableTable([]);
+            if (currentCategory) renderEditableTable(getFilterData());
             alert("✅ 所有数据已清空");
         }
 
